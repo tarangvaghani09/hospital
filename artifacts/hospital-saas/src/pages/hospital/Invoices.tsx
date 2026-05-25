@@ -903,7 +903,7 @@ export function Invoices() {
             <Button variant="outline" className="gap-1.5" onClick={() => setSettingsOpen(true)}>
               <Settings2 className="w-4 h-4" /> Format
             </Button>
-            <Button className="gap-2" onClick={() => setCreateOpen(true)}>
+            <Button className="gap-2 cursor-pointer" onClick={() => setCreateOpen(true)}>
               <Plus className="w-4 h-4" /> Create Invoice
             </Button>
           </div>

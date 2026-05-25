@@ -204,11 +204,11 @@ export function Receptionists() {
           <div className="flex items-center gap-2">
             <Button className="gap-2 px-3" variant="outline" onClick={() => toggleSelectAll(selectedIds.length !== receptionists.length)}>
               {selectedIds.length === receptionists.length && receptionists.length > 0
-                ? <CheckSquare className="w-4 h-4 text-blue-600" />
+                ? <CheckSquare className="w-4 h-4 text-purple-600" />
                 : <Square className="w-4 h-4 text-slate-500" />}
               {selectedIds.length === receptionists.length && receptionists.length > 0 ? "Deselect all" : `Select all receptionists (${receptionists.length})`}
             </Button>
-            <Button className="gap-2" onClick={() => setAddOpen(true)}>
+            <Button className="gap-2 cursor-pointer" onClick={() => setAddOpen(true)}>
               <Plus className="w-4 h-4" /> Add Receptionist
             </Button>
           </div>
@@ -245,10 +245,10 @@ export function Receptionists() {
                 ) : receptionists.map((staff) => (
                   <TableRow key={staff.id} className={selectedIds.includes(staff.id) ? "bg-primary/5 border-primary/30" : ""}>
                     <TableCell>
-                      <button onClick={() => toggleOne(staff.id, !selectedIds.includes(staff.id))} className="flex items-center justify-center w-5 h-5">
+                      <button onClick={() => toggleOne(staff.id, !selectedIds.includes(staff.id))} className="flex items-center justify-center w-5 h-5 cursor-pointer">
                         {selectedIds.includes(staff.id)
-                          ? <CheckSquare className="w-5 h-5 text-blue-600" />
-                          : <Square className="w-5 h-5 text-slate-400 hover:text-blue-600" />}
+                          ? <CheckSquare className="w-5 h-5 text-purple-600" />
+                          : <Square className="w-5 h-5 text-slate-400 hover:text-purple-600" />}
                       </button>
                     </TableCell>
                     <TableCell>
@@ -285,6 +285,7 @@ export function Receptionists() {
                       <Button
                         variant="ghost"
                         size="sm"
+                        className="cursor-pointer"
                         onClick={() => {
                           setSelected({ id: staff.id, name: staff.name, email: staff.email, isActive: staff.isActive });
                           setEditOpen(true);
@@ -307,9 +308,9 @@ export function Receptionists() {
             <span className="text-sm font-medium">receptionists selected</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button size="sm" className="rounded-xl border border-white/30 bg-transparent text-white hover:bg-white/10" onClick={() => setSelectedIds([])}>Deselect</Button>
-            <Button size="sm" className="rounded-xl bg-red-600 text-white hover:bg-red-500" onClick={() => setDeleteOpen(true)}>Delete all</Button>
-            <button className="ml-1 text-slate-300 hover:text-white" onClick={() => setSelectedIds([])}><X className="w-4 h-4" /></button>
+            <Button size="sm" className="rounded-xl border border-white/30 bg-transparent text-white hover:bg-white/10 cursor-pointer" onClick={() => setSelectedIds([])}>Deselect</Button>
+            <Button size="sm" className="rounded-xl border-0 bg-red-600 text-white hover:bg-red-500 shadow-none cursor-pointer" onClick={() => setDeleteOpen(true)}>Delete all</Button>
+            <button className="ml-1 text-slate-300 hover:text-white cursor-pointer" onClick={() => setSelectedIds([])}><X className="w-4 h-4" /></button>
           </div>
         </div>
       )}
@@ -335,5 +336,3 @@ export function Receptionists() {
     </DashboardLayout>
   );
 }
-
-

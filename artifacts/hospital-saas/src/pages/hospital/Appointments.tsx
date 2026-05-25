@@ -511,12 +511,12 @@ export function Appointments() {
               onClick={toggleSelectAll}
             >
               {selectedIds.size === appointments.length && appointments.length > 0
-                ? <CheckSquare className="w-4 h-4 text-blue-600" />
+                ? <CheckSquare className="w-4 h-4 text-purple-600" />
                 : <Square className="w-4 h-4 text-slate-500" />}
               {selectedIds.size === appointments.length && appointments.length > 0 ? "Deselect all" : `Select all appointments (${appointments.length})`}
             </Button>
             {!isDoctor && (
-              <Button className="gap-2" onClick={() => setBookOpen(true)}>
+              <Button className="gap-2 cursor-pointer" onClick={() => setBookOpen(true)}>
                 <Plus className="w-4 h-4" /> Book Appointment
               </Button>
             )}
@@ -632,10 +632,10 @@ export function Appointments() {
                     className={selectedIds.has(apt.id) ? "bg-primary/5" : ""}
                   >
                     <TableCell>
-                      <button onClick={() => toggleSelect(apt.id)} className="flex items-center justify-center w-5 h-5">
+                      <button onClick={() => toggleSelect(apt.id)} className="flex items-center justify-center w-5 h-5 cursor-pointer">
                         {selectedIds.has(apt.id)
-                          ? <CheckSquare className="w-5 h-5 text-blue-600" />
-                          : <Square className="w-5 h-5 text-slate-400 hover:text-blue-600" />}
+                          ? <CheckSquare className="w-5 h-5 text-purple-600" />
+                          : <Square className="w-5 h-5 text-slate-400 hover:text-purple-600" />}
                       </button>
                     </TableCell>
                     <TableCell>
@@ -671,7 +671,7 @@ export function Appointments() {
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 cursor-pointer">
                             <MoreVertical className="w-4 h-4" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -709,9 +709,9 @@ export function Appointments() {
             <span className="text-sm font-medium">appointments selected</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button size="sm" className="rounded-xl border border-white/30 bg-transparent text-white hover:bg-white/10" onClick={() => setSelectedIds(new Set())}>Deselect</Button>
-            <Button size="sm" className="rounded-xl bg-red-600 text-white hover:bg-red-500" onClick={() => setBulkDeleteOpen(true)}>Delete all</Button>
-            <button className="ml-1 text-slate-300 hover:text-white" onClick={() => setSelectedIds(new Set())}><X className="w-4 h-4" /></button>
+            <Button size="sm" className="rounded-xl border border-white/30 bg-transparent text-white hover:bg-white/10 cursor-pointer" onClick={() => setSelectedIds(new Set())}>Deselect</Button>
+            <Button size="sm" className="rounded-xl border-0 bg-red-600 text-white hover:bg-red-500 shadow-none cursor-pointer" onClick={() => setBulkDeleteOpen(true)}>Delete all</Button>
+            <button className="ml-1 text-slate-300 hover:text-white cursor-pointer" onClick={() => setSelectedIds(new Set())}><X className="w-4 h-4" /></button>
           </div>
         </div>
       )}
@@ -786,5 +786,3 @@ export function Appointments() {
     </DashboardLayout>
   );
 }
-
-

@@ -43,7 +43,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </div>
           <button
             onClick={() => logout()}
-            className="text-sm font-medium text-destructive hover:text-destructive/80 transition-colors ml-2"
+            className="ml-2 cursor-pointer text-sm font-medium text-destructive transition-colors hover:text-destructive/80"
           >
             Logout
           </button>

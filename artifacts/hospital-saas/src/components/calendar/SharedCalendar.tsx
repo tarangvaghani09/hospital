@@ -177,7 +177,7 @@ export function SharedCalendar() {
                                 <button
                                   key={apt.id}
                                   onClick={() => setSelectedApt(apt)}
-                                  className={`absolute inset-1 p-1.5 text-xs rounded-lg border ${colorClass} overflow-hidden shadow-sm hover:shadow-md transition-all text-left w-[calc(100%-8px)]`}
+                                  className={`absolute inset-1 w-[calc(100%-8px)] cursor-pointer overflow-hidden rounded-lg border p-1.5 text-left text-xs shadow-sm transition-all hover:shadow-md ${colorClass}`}
                                   title={`${apt.patientName} - Dr. ${apt.doctorName}`}
                                 >
                                   <div className="font-semibold truncate">{apt.patientName}</div>

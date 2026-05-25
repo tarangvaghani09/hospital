@@ -140,11 +140,11 @@ export function Departments() {
           <div className="flex items-center gap-2">
             <Button className="gap-2 px-3" variant="outline" onClick={() => toggleSelectAll(selectedIds.length !== departments.length)}>
               {selectedIds.length === departments.length && departments.length > 0
-                ? <CheckSquare className="w-4 h-4 text-blue-600" />
+                ? <CheckSquare className="w-4 h-4 text-purple-600" />
                 : <Square className="w-4 h-4 text-slate-500" />}
               {selectedIds.length === departments.length && departments.length > 0 ? "Deselect all" : `Select all departments (${departments.length})`}
             </Button>
-            <Button className="gap-2" onClick={() => { setEditing(null); setDialogOpen(true); }}>
+            <Button className="gap-2 cursor-pointer" onClick={() => { setEditing(null); setDialogOpen(true); }}>
               <Plus className="w-4 h-4" /> Add Department
             </Button>
           </div>
@@ -181,10 +181,10 @@ export function Departments() {
                 ) : departments.map((dept) => (
                   <TableRow key={dept.id} className={selectedIds.includes(dept.id) ? "bg-primary/5 border-primary/30" : ""}>
                     <TableCell>
-                      <button onClick={() => toggleOne(dept.id, !selectedIds.includes(dept.id))} className="flex items-center justify-center w-5 h-5">
+                      <button onClick={() => toggleOne(dept.id, !selectedIds.includes(dept.id))} className="flex items-center justify-center w-5 h-5 cursor-pointer">
                         {selectedIds.includes(dept.id)
-                          ? <CheckSquare className="w-5 h-5 text-blue-600" />
-                          : <Square className="w-5 h-5 text-slate-400 hover:text-blue-600" />}
+                          ? <CheckSquare className="w-5 h-5 text-purple-600" />
+                          : <Square className="w-5 h-5 text-slate-400 hover:text-purple-600" />}
                       </button>
                     </TableCell>
                     <TableCell className="font-medium">{dept.name}</TableCell>
@@ -203,7 +203,7 @@ export function Departments() {
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" className="gap-1.5"
+                      <Button variant="ghost" size="sm" className="gap-1.5 cursor-pointer"
                         onClick={() => { setEditing(dept); setDialogOpen(true); }}>
                         <Pencil className="w-3.5 h-3.5" /> Edit
                       </Button>
@@ -222,9 +222,9 @@ export function Departments() {
             <span className="text-sm font-medium">departments selected</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button size="sm" className="rounded-xl border border-white/30 bg-transparent text-white hover:bg-white/10" onClick={() => setSelectedIds([])}>Deselect</Button>
-            <Button size="sm" className="rounded-xl bg-red-600 text-white hover:bg-red-500" onClick={() => setDeleteOpen(true)}>Delete all</Button>
-            <button className="ml-1 text-slate-300 hover:text-white" onClick={() => setSelectedIds([])}><X className="w-4 h-4" /></button>
+            <Button size="sm" className="rounded-xl border border-white/30 bg-transparent text-white hover:bg-white/10 cursor-pointer" onClick={() => setSelectedIds([])}>Deselect</Button>
+            <Button size="sm" className="rounded-xl border-0 bg-red-600 text-white hover:bg-red-500 shadow-none cursor-pointer" onClick={() => setDeleteOpen(true)}>Delete all</Button>
+            <button className="ml-1 text-slate-300 hover:text-white cursor-pointer" onClick={() => setSelectedIds([])}><X className="w-4 h-4" /></button>
           </div>
         </div>
       )}
@@ -254,5 +254,3 @@ export function Departments() {
     </DashboardLayout>
   );
 }
-
-

@@ -11,12 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Plus, Trash2, Pill, User, Stethoscope, Calendar, Search } from "lucide-react";
+import { Plus, Trash2, Pill, User, Stethoscope, Calendar, Search, CheckSquare, Square, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
 
@@ -292,10 +293,12 @@ function ViewPrescriptionDialog({ rx, open, onClose }: { rx: any; open: boolean;
 
 export function Prescriptions() {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [newOpen, setNewOpen] = useState(false);
   const [viewRx, setViewRx] = useState<any>(null);
   const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const { data, isLoading } = useListPrescriptions(
     {},
@@ -329,6 +332,19 @@ export function Prescriptions() {
       </body></html>`);
     w.document.close();
   }
+  async function handleDeleteSelected() {
+    const ids = [...selectedIds];
+    const results = await Promise.allSettled(
+      ids.map((id) => fetch(`/api/prescriptions/${id}`, { method: "DELETE", credentials: "include" }))
+    );
+    const ok = results.filter((r) => r.status === "fulfilled" && r.value.ok).length;
+    const fail = results.length - ok;
+    if (ok) toast({ title: `Deleted ${ok} prescription(s)` });
+    if (fail) toast({ variant: "destructive", title: `${fail} deletion(s) failed` });
+    setSelectedIds([]);
+    setDeleteOpen(false);
+    invalidate();
+  }
 
   return (
     <DashboardLayout>
@@ -338,9 +354,17 @@ export function Prescriptions() {
             <h1 className="text-3xl font-bold tracking-tight">Prescriptions</h1>
             <p className="text-muted-foreground mt-2">Manage medical prescriptions across the hospital</p>
           </div>
-          <Button className="gap-2" onClick={() => setNewOpen(true)}>
-            <Plus className="w-4 h-4" /> New Prescription
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button className="gap-2 px-3" variant="outline" onClick={() => toggleSelectAll(selectedIds.length !== prescriptions.length)}>
+              {selectedIds.length === prescriptions.length && prescriptions.length > 0
+                ? <CheckSquare className="w-4 h-4 text-purple-600" />
+                : <Square className="w-4 h-4 text-slate-500" />}
+              {selectedIds.length === prescriptions.length && prescriptions.length > 0 ? "Deselect all" : `Select all prescriptions (${prescriptions.length})`}
+            </Button>
+            <Button className="gap-2 cursor-pointer" onClick={() => setNewOpen(true)}>
+              <Plus className="w-4 h-4" /> New Prescription
+            </Button>
+          </div>
         </div>
 
         <Card>
@@ -349,20 +373,12 @@ export function Prescriptions() {
               <Search className="w-4 h-4 text-muted-foreground" />
               <Input placeholder="Filter prescriptions..." value={search} onChange={(e) => setSearch(e.target.value)} className="h-9" />
             </div>
-            {selectedIds.length > 0 && (
-              <div className="mt-3 flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">{selectedIds.length} selected</span>
-                <Button size="sm" variant="outline" onClick={bulkPrintSelected}>Print Selected</Button>
-              </div>
-            )}
           </div>
           <CardContent className="p-0">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-10">
-                    <input type="checkbox" checked={prescriptions.length > 0 && selectedIds.length === prescriptions.length} onChange={(e) => toggleSelectAll(e.target.checked)} />
-                  </TableHead>
+                  <TableHead className="w-10"></TableHead>
                   <TableHead>ID</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Patient</TableHead>
@@ -378,9 +394,13 @@ export function Prescriptions() {
                 ) : prescriptions.length === 0 ? (
                   <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">No prescriptions found</TableCell></TableRow>
                 ) : prescriptions.map((rx) => (
-                  <TableRow key={rx.id}>
+                  <TableRow key={rx.id} className={selectedIds.includes(rx.id) ? "bg-primary/5 border-primary/30" : ""}>
                     <TableCell>
-                      <input type="checkbox" checked={selectedIds.includes(rx.id)} onChange={(e) => toggleOne(rx.id, e.target.checked)} />
+                      <button onClick={() => toggleOne(rx.id, !selectedIds.includes(rx.id))} className="flex items-center justify-center w-5 h-5 cursor-pointer">
+                        {selectedIds.includes(rx.id)
+                          ? <CheckSquare className="w-5 h-5 text-purple-600" />
+                          : <Square className="w-5 h-5 text-slate-400 hover:text-purple-600" />}
+                      </button>
                     </TableCell>
                     <TableCell className="font-medium text-muted-foreground">#{rx.id}</TableCell>
                     <TableCell className="text-muted-foreground">{new Date(rx.createdAt).toLocaleDateString()}</TableCell>
@@ -391,7 +411,7 @@ export function Prescriptions() {
                       <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">{rx.medicines?.length || 0} med{(rx.medicines?.length ?? 0) !== 1 ? "s" : ""}</span>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" onClick={() => setViewRx(rx)}>View</Button>
+                      <Button variant="ghost" size="sm" className="cursor-pointer" onClick={() => setViewRx(rx)}>View</Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -400,6 +420,36 @@ export function Prescriptions() {
           </CardContent>
         </Card>
       </div>
+      {selectedIds.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[min(92vw,760px)] rounded-2xl bg-slate-950 text-white px-4 py-3 shadow-2xl flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-violet-600 px-2 text-sm font-semibold">{selectedIds.length}</span>
+            <span className="text-sm font-medium">prescriptions selected</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button size="sm" className="rounded-xl border border-white/30 bg-transparent text-white hover:bg-white/10 cursor-pointer" onClick={() => setSelectedIds([])}>Deselect</Button>
+            <Button size="sm" className="rounded-xl border border-white/30 bg-transparent text-white hover:bg-white/10 cursor-pointer" onClick={bulkPrintSelected}>Print selected</Button>
+            <Button size="sm" className="rounded-xl border-0 bg-red-600 text-white hover:bg-red-500 shadow-none cursor-pointer" onClick={() => setDeleteOpen(true)}>Delete all</Button>
+            <button className="ml-1 text-slate-300 hover:text-white cursor-pointer" onClick={() => setSelectedIds([])}><X className="w-4 h-4" /></button>
+          </div>
+        </div>
+      )}
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete selected prescriptions?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You are deleting {selectedIds.length} selected prescription(s). This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteSelected} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete Selected
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <NewPrescriptionDialog open={newOpen} onClose={() => setNewOpen(false)} onSuccess={invalidate} />
       <ViewPrescriptionDialog rx={viewRx} open={!!viewRx} onClose={() => setViewRx(null)} />

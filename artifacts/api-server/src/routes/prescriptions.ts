@@ -97,4 +97,23 @@ router.patch("/prescriptions/:id", authenticate, requireHospital, async (req, re
   res.json(await enrichPrescription(prescription));
 });
 
+router.delete("/prescriptions/:id", authenticate, requireHospital, async (req, res): Promise<void> => {
+  const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+  const hospitalId = req.user!.hospitalId!;
+
+  const [existing] = await db
+    .select({ id: prescriptionsTable.id })
+    .from(prescriptionsTable)
+    .where(and(eq(prescriptionsTable.id, id), eq(prescriptionsTable.hospitalId, hospitalId)));
+  if (!existing) {
+    res.status(404).json({ error: "Prescription not found" });
+    return;
+  }
+
+  await db.delete(prescriptionMedicinesTable).where(eq(prescriptionMedicinesTable.prescriptionId, id));
+  await db.delete(prescriptionsTable).where(and(eq(prescriptionsTable.id, id), eq(prescriptionsTable.hospitalId, hospitalId)));
+
+  res.status(204).send();
+});
+
 export default router;
