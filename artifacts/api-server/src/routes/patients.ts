@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { eq, and, like, sql, desc, or } from "drizzle-orm";
+import { eq, and, ilike, sql, desc, or } from "drizzle-orm";
 import { db, patientProfilesTable, appointmentsTable, prescriptionsTable, invoicesTable, prescriptionMedicinesTable, invoiceItemsTable } from "@workspace/db";
 import { authenticate, requireHospital, requireRoles } from "../middlewares/authenticate";
 
@@ -20,7 +20,11 @@ router.get("/patients", authenticate, requireHospital, async (req, res): Promise
   if (search) {
     patients = await db.select().from(patientProfilesTable).where(and(
       eq(patientProfilesTable.hospitalId, hospitalId),
-      or(like(patientProfilesTable.name, `%${search}%`), like(patientProfilesTable.phone, `%${search}%`), like(patientProfilesTable.patientId, `%${search}%`))
+      or(
+        ilike(patientProfilesTable.name, `%${search}%`),
+        ilike(patientProfilesTable.phone, `%${search}%`),
+        ilike(patientProfilesTable.patientId, `%${search}%`)
+      )
     )).orderBy(desc(patientProfilesTable.createdAt)).limit(Number(limit)).offset(offset);
   } else {
     patients = await db.select().from(patientProfilesTable).where(eq(patientProfilesTable.hospitalId, hospitalId)).orderBy(desc(patientProfilesTable.createdAt)).limit(Number(limit)).offset(offset);
