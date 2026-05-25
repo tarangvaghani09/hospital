@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Plus, Mail, Phone, CheckSquare, Square } from "lucide-react";
+import { Search, Plus, Mail, Phone, CheckSquare, Square, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
@@ -178,9 +178,13 @@ export function Doctors() {
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
+              className="gap-2 px-3"
               onClick={() => toggleSelectAll(selectedIds.length !== doctors.length)}
             >
-              Select all doctors ({doctors.length})
+              {selectedIds.length === doctors.length && doctors.length > 0
+                ? <CheckSquare className="w-4 h-4 text-blue-600" />
+                : <Square className="w-4 h-4 text-slate-500" />}
+              {selectedIds.length === doctors.length && doctors.length > 0 ? "Deselect all" : `Select all doctors (${doctors.length})`}
             </Button>
             <Button className="gap-2" onClick={() => setAddOpen(true)}>
               <Plus className="w-4 h-4" /> Add Doctor
@@ -228,10 +232,10 @@ export function Doctors() {
                 ) : doctors.map((doctor) => (
                   <TableRow key={doctor.id} className={selectedIds.includes(doctor.id) ? "bg-primary/5 border-primary/30" : ""}>
                     <TableCell>
-                      <button onClick={() => toggleOne(doctor.id, !selectedIds.includes(doctor.id))} className="flex items-center justify-center w-4 h-4">
+                      <button onClick={() => toggleOne(doctor.id, !selectedIds.includes(doctor.id))} className="flex items-center justify-center w-5 h-5">
                         {selectedIds.includes(doctor.id)
-                          ? <CheckSquare className="w-4 h-4 text-primary" />
-                          : <Square className="w-4 h-4 text-primary" />}
+                          ? <CheckSquare className="w-5 h-5 text-blue-600" />
+                          : <Square className="w-5 h-5 text-slate-400 hover:text-blue-600" />}
                       </button>
                     </TableCell>
                     <TableCell>
@@ -280,11 +284,16 @@ export function Doctors() {
         </Card>
       </div>
       {selectedIds.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-2xl bg-slate-950 text-white px-4 py-3 shadow-2xl flex items-center gap-3">
-          <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-violet-600 px-2 text-sm font-semibold">{selectedIds.length}</span>
-          <span className="text-sm font-medium">doctors selected</span>
-          <Button size="sm" variant="outline" onClick={() => setSelectedIds([])}>Deselect</Button>
-          <Button size="sm" variant="destructive" onClick={() => setDeleteOpen(true)}>Delete all</Button>
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[min(92vw,760px)] rounded-2xl bg-slate-950 text-white px-4 py-3 shadow-2xl flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-violet-600 px-2 text-sm font-semibold">{selectedIds.length}</span>
+            <span className="text-sm font-medium">doctors selected</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button size="sm" className="rounded-xl border border-white/30 bg-transparent text-white hover:bg-white/10" onClick={() => setSelectedIds([])}>Deselect</Button>
+            <Button size="sm" className="rounded-xl bg-red-600 text-white hover:bg-red-500" onClick={() => setDeleteOpen(true)}>Delete all</Button>
+            <button className="ml-1 text-slate-300 hover:text-white" onClick={() => setSelectedIds([])}><X className="w-4 h-4" /></button>
+          </div>
         </div>
       )}
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
@@ -308,3 +317,5 @@ export function Doctors() {
     </DashboardLayout>
   );
 }
+
+

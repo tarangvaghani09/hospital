@@ -13,7 +13,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Calendar as CalendarIcon, Clock, Edit2, Trash2, MoreVertical, Search, Filter, CheckSquare, Square } from "lucide-react";
+import { Plus, Calendar as CalendarIcon, Clock, Edit2, Trash2, MoreVertical, Search, Filter, CheckSquare, Square, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -507,9 +507,13 @@ export function Appointments() {
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
+              className="gap-2 px-3"
               onClick={toggleSelectAll}
             >
-              Select all appointments ({appointments.length})
+              {selectedIds.size === appointments.length && appointments.length > 0
+                ? <CheckSquare className="w-4 h-4 text-blue-600" />
+                : <Square className="w-4 h-4 text-slate-500" />}
+              {selectedIds.size === appointments.length && appointments.length > 0 ? "Deselect all" : `Select all appointments (${appointments.length})`}
             </Button>
             {!isDoctor && (
               <Button className="gap-2" onClick={() => setBookOpen(true)}>
@@ -628,10 +632,10 @@ export function Appointments() {
                     className={selectedIds.has(apt.id) ? "bg-primary/5" : ""}
                   >
                     <TableCell>
-                      <button onClick={() => toggleSelect(apt.id)} className="flex items-center justify-center w-4 h-4">
+                      <button onClick={() => toggleSelect(apt.id)} className="flex items-center justify-center w-5 h-5">
                         {selectedIds.has(apt.id)
-                          ? <CheckSquare className="w-4 h-4 text-primary" />
-                          : <Square className="w-4 h-4 text-muted-foreground" />}
+                          ? <CheckSquare className="w-5 h-5 text-blue-600" />
+                          : <Square className="w-5 h-5 text-slate-400 hover:text-blue-600" />}
                       </button>
                     </TableCell>
                     <TableCell>
@@ -699,11 +703,16 @@ export function Appointments() {
         </Card>
       </div>
       {selectedIds.size > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-2xl bg-slate-950 text-white px-4 py-3 shadow-2xl flex items-center gap-3">
-          <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-violet-600 px-2 text-sm font-semibold">{selectedIds.size}</span>
-          <span className="text-sm font-medium">appointments selected</span>
-          <Button size="sm" variant="outline" onClick={() => setSelectedIds(new Set())}>Deselect</Button>
-          <Button size="sm" variant="destructive" onClick={() => setBulkDeleteOpen(true)}>Delete all</Button>
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[min(92vw,760px)] rounded-2xl bg-slate-950 text-white px-4 py-3 shadow-2xl flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-violet-600 px-2 text-sm font-semibold">{selectedIds.size}</span>
+            <span className="text-sm font-medium">appointments selected</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button size="sm" className="rounded-xl border border-white/30 bg-transparent text-white hover:bg-white/10" onClick={() => setSelectedIds(new Set())}>Deselect</Button>
+            <Button size="sm" className="rounded-xl bg-red-600 text-white hover:bg-red-500" onClick={() => setBulkDeleteOpen(true)}>Delete all</Button>
+            <button className="ml-1 text-slate-300 hover:text-white" onClick={() => setSelectedIds(new Set())}><X className="w-4 h-4" /></button>
+          </div>
         </div>
       )}
 
@@ -777,3 +786,5 @@ export function Appointments() {
     </DashboardLayout>
   );
 }
+
+
