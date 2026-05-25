@@ -1,9 +1,10 @@
-import { Switch, Route, Router as WouterRouter, Redirect } from "wouter";
+import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/lib/auth";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { Helmet } from "react-helmet-async";
 
 // Public Pages
 import { Login } from "@/pages/public/Login";
@@ -69,13 +70,72 @@ function RootRoute() {
 }
 
 function Router() {
+  const [location] = useLocation();
+
+  const getPageTitle = (path: string) => {
+    if (path === "/") return "MediCore";
+    if (path === "/login") return "Login | MediCore";
+    if (path === "/staff") return "Staff Login | MediCore";
+    if (path === "/register") return "Register Hospital | MediCore";
+    if (path === "/register-patient") return "Register Patient | MediCore";
+
+    if (path === "/super-admin/dashboard") return "Super Admin Dashboard | MediCore";
+    if (path === "/super-admin/hospitals") return "Hospitals | MediCore";
+    if (path.startsWith("/super-admin/hospitals/")) return "Hospital Detail | MediCore";
+    if (path === "/super-admin/subscriptions") return "Subscription Plans | MediCore";
+    if (path === "/super-admin/reports") return "Reports | MediCore";
+    if (path === "/super-admin/tickets") return "Tickets | MediCore";
+    if (path === "/super-admin/settings") return "Settings | MediCore";
+
+    if (path === "/hospital/dashboard") return "Dashboard | MediCore";
+    if (path === "/hospital/doctors") return "Doctors | MediCore";
+    if (path.startsWith("/hospital/doctors/")) return "Doctor Detail | MediCore";
+    if (path === "/hospital/receptionists") return "Receptionists | MediCore";
+    if (path === "/hospital/departments") return "Departments | MediCore";
+    if (path === "/hospital/patients") return "Patients | MediCore";
+    if (path.startsWith("/hospital/patients/")) return "Patient Detail | MediCore";
+    if (path === "/hospital/appointments") return "Appointments | MediCore";
+    if (path === "/hospital/calendar") return "Calendar | MediCore";
+    if (path === "/hospital/invoices") return "Invoices | MediCore";
+    if (path === "/hospital/prescriptions") return "Prescriptions | MediCore";
+    if (path === "/hospital/reports") return "Reports | MediCore";
+    if (path === "/hospital/subscription") return "Subscription | MediCore";
+    if (path === "/hospital/profile") return "Profile | MediCore";
+    if (path === "/hospital/settings") return "Settings | MediCore";
+
+    if (path === "/receptionist/dashboard") return "Receptionist Dashboard | MediCore";
+    if (path === "/receptionist/appointments") return "Appointments | MediCore";
+    if (path === "/receptionist/calendar") return "Calendar | MediCore";
+    if (path === "/receptionist/patients") return "Patients | MediCore";
+    if (path === "/receptionist/invoices") return "Invoices | MediCore";
+    if (path === "/receptionist/collection") return "Collection | MediCore";
+
+    if (path === "/doctor/dashboard") return "Doctor Dashboard | MediCore";
+    if (path === "/doctor/appointments") return "Appointments | MediCore";
+    if (path === "/doctor/calendar") return "Calendar | MediCore";
+    if (path === "/doctor/patients") return "Patients | MediCore";
+    if (path === "/doctor/prescriptions") return "Prescriptions | MediCore";
+
+    if (path === "/patient/dashboard") return "Patient Dashboard | MediCore";
+    if (path === "/patient/appointments") return "Appointments | MediCore";
+    if (path === "/patient/prescriptions") return "Prescriptions | MediCore";
+    if (path === "/patient/invoices") return "Invoices | MediCore";
+    if (path === "/patient/profile") return "Profile | MediCore";
+
+    return "MediCore";
+  };
+
   return (
-    <Switch>
-      <Route path="/" component={RootRoute} />
-      <Route path="/login" component={Login} />
-      <Route path="/staff" component={StaffLogin} />
-      <Route path="/register" component={RegisterHospital} />
-      <Route path="/register-patient" component={RegisterPatient} />
+    <>
+      <Helmet>
+        <title>{getPageTitle(location)}</title>
+      </Helmet>
+      <Switch>
+        <Route path="/" component={RootRoute} />
+        <Route path="/login" component={Login} />
+        <Route path="/staff" component={StaffLogin} />
+        <Route path="/register" component={RegisterHospital} />
+        <Route path="/register-patient" component={RegisterPatient} />
       
       {/* Super Admin */}
       <Route path="/super-admin/dashboard">
@@ -201,12 +261,13 @@ function Router() {
         {() => <ProtectedRoute component={PatientProfile} allowedRoles={["PATIENT"]} />}
       </Route>
 
-      <Route>
-        <div className="min-h-screen flex items-center justify-center">
-          <h1 className="text-2xl font-bold">404 Not Found</h1>
-        </div>
-      </Route>
-    </Switch>
+        <Route>
+          <div className="min-h-screen flex items-center justify-center">
+            <h1 className="text-2xl font-bold">404 Not Found</h1>
+          </div>
+        </Route>
+      </Switch>
+    </>
   );
 }
 
