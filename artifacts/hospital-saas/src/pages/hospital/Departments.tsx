@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useListDepartments, getListDepartmentsQueryKey,
-  useCreateDepartment, useUpdateDepartment,
+  useCreateDepartment, useUpdateDepartment, useDeleteDepartment,
 } from "@workspace/api-client-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Users, Pencil } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Plus, Users, Pencil, CheckSquare, Square } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
@@ -94,12 +96,38 @@ export function Departments() {
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const deleteDepartment = useDeleteDepartment();
 
   const { data, isLoading } = useListDepartments(
     { query: { queryKey: getListDepartmentsQueryKey() } }
   );
+  const departments = (data ?? []).filter((d: any) => {
+    if (statusFilter === "ACTIVE") return d.isActive !== false;
+    if (statusFilter === "INACTIVE") return d.isActive === false;
+    return true;
+  });
 
   function invalidate() { queryClient.invalidateQueries({ queryKey: getListDepartmentsQueryKey() }); }
+  function toggleSelectAll(checked: boolean) {
+    setSelectedIds(checked ? departments.map((d: any) => d.id) : []);
+  }
+  function toggleOne(id: number, checked: boolean) {
+    setSelectedIds((prev) => checked ? [...prev, id] : prev.filter((x) => x !== id));
+  }
+  async function handleDeleteSelected() {
+    const ids = [...selectedIds];
+    const results = await Promise.allSettled(ids.map((id) => deleteDepartment.mutateAsync({ id })));
+    const ok = results.filter((r) => r.status === "fulfilled").length;
+    const fail = results.length - ok;
+    if (ok) toast({ title: `Deleted ${ok} department(s)` });
+    if (fail) toast({ variant: "destructive", title: `${fail} deletion(s) failed` });
+    setSelectedIds([]);
+    setDeleteOpen(false);
+    invalidate();
+  }
 
   return (
     <DashboardLayout>
@@ -109,16 +137,32 @@ export function Departments() {
             <h1 className="text-3xl font-bold tracking-tight">Departments</h1>
             <p className="text-muted-foreground mt-2">Manage hospital departments and categories</p>
           </div>
-          <Button className="gap-2" onClick={() => { setEditing(null); setDialogOpen(true); }}>
-            <Plus className="w-4 h-4" /> Add Department
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => toggleSelectAll(selectedIds.length !== departments.length)}>
+              Select all departments ({departments.length})
+            </Button>
+            <Button className="gap-2" onClick={() => { setEditing(null); setDialogOpen(true); }}>
+              <Plus className="w-4 h-4" /> Add Department
+            </Button>
+          </div>
         </div>
 
         <Card>
+          <div className="p-4 flex items-center gap-2">
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="h-9 w-[140px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All Status</SelectItem>
+                <SelectItem value="ACTIVE">Active</SelectItem>
+                <SelectItem value="INACTIVE">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <CardContent className="p-0">
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10"></TableHead>
                   <TableHead>Department Name</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead>Doctors</TableHead>
@@ -128,11 +172,18 @@ export function Departments() {
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Loading departments...</TableCell></TableRow>
-                ) : data?.length === 0 ? (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No departments found</TableCell></TableRow>
-                ) : data?.map((dept) => (
-                  <TableRow key={dept.id}>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Loading departments...</TableCell></TableRow>
+                ) : departments.length === 0 ? (
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No departments found</TableCell></TableRow>
+                ) : departments.map((dept) => (
+                  <TableRow key={dept.id} className={selectedIds.includes(dept.id) ? "bg-primary/5 border-primary/30" : ""}>
+                    <TableCell>
+                      <button onClick={() => toggleOne(dept.id, !selectedIds.includes(dept.id))} className="flex items-center justify-center w-4 h-4">
+                        {selectedIds.includes(dept.id)
+                          ? <CheckSquare className="w-4 h-4 text-primary" />
+                          : <Square className="w-4 h-4 text-primary" />}
+                      </button>
+                    </TableCell>
                     <TableCell className="font-medium">{dept.name}</TableCell>
                     <TableCell className="text-muted-foreground">{dept.description || "-"}</TableCell>
                     <TableCell>
@@ -161,6 +212,30 @@ export function Departments() {
           </CardContent>
         </Card>
       </div>
+      {selectedIds.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-2xl bg-slate-950 text-white px-4 py-3 shadow-2xl flex items-center gap-3">
+          <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-violet-600 px-2 text-sm font-semibold">{selectedIds.length}</span>
+          <span className="text-sm font-medium">departments selected</span>
+          <Button size="sm" variant="outline" onClick={() => setSelectedIds([])}>Deselect</Button>
+          <Button size="sm" variant="destructive" onClick={() => setDeleteOpen(true)}>Delete all</Button>
+        </div>
+      )}
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete selected departments?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You are deleting {selectedIds.length} selected department(s). This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteSelected} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete Selected
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <DeptDialog
         open={dialogOpen}

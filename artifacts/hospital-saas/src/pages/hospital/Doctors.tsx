@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useListDoctors, getListDoctorsQueryKey,
-  useCreateDoctor,
+  useCreateDoctor, useDeleteDoctor,
   useListDepartments, getListDepartmentsQueryKey,
 } from "@workspace/api-client-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -12,9 +12,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Plus, Mail, Phone } from "lucide-react";
+import { Search, Plus, Mail, Phone, CheckSquare, Square } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
@@ -131,14 +132,40 @@ function AddDoctorDialog({ open, onClose, onSuccess }: { open: boolean; onClose:
 export function Doctors() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
   const [addOpen, setAddOpen] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const deleteDoctor = useDeleteDoctor();
 
   const { data, isLoading } = useListDoctors(
     { search: search || undefined },
     { query: { queryKey: getListDoctorsQueryKey({ search: search || undefined }) } }
   );
+  const doctors = (data ?? []).filter((d: any) => {
+    if (statusFilter === "ACTIVE") return d.isActive !== false;
+    if (statusFilter === "INACTIVE") return d.isActive === false;
+    return true;
+  });
 
   function invalidate() { queryClient.invalidateQueries({ queryKey: getListDoctorsQueryKey() }); }
+  function toggleSelectAll(checked: boolean) {
+    setSelectedIds(checked ? doctors.map((d: any) => d.id) : []);
+  }
+  function toggleOne(id: number, checked: boolean) {
+    setSelectedIds((prev) => checked ? [...prev, id] : prev.filter((x) => x !== id));
+  }
+  async function handleDeleteSelected() {
+    const ids = [...selectedIds];
+    const results = await Promise.allSettled(ids.map((id) => deleteDoctor.mutateAsync({ id })));
+    const ok = results.filter((r) => r.status === "fulfilled").length;
+    const fail = results.length - ok;
+    if (ok) toast({ title: `Deleted ${ok} doctor(s)` });
+    if (fail) toast({ variant: "destructive", title: `${fail} deletion(s) failed` });
+    setSelectedIds([]);
+    setDeleteOpen(false);
+    invalidate();
+  }
 
   return (
     <DashboardLayout>
@@ -148,14 +175,22 @@ export function Doctors() {
             <h1 className="text-3xl font-bold tracking-tight">Doctors</h1>
             <p className="text-muted-foreground mt-2">Manage hospital doctors and their schedules</p>
           </div>
-          <Button className="gap-2" onClick={() => setAddOpen(true)}>
-            <Plus className="w-4 h-4" /> Add Doctor
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={() => toggleSelectAll(selectedIds.length !== doctors.length)}
+            >
+              Select all doctors ({doctors.length})
+            </Button>
+            <Button className="gap-2" onClick={() => setAddOpen(true)}>
+              <Plus className="w-4 h-4" /> Add Doctor
+            </Button>
+          </div>
         </div>
 
         <Card>
           <CardHeader className="py-4">
-            <div className="flex items-center gap-2 max-w-sm">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
               <Search className="w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search doctors..."
@@ -163,12 +198,21 @@ export function Doctors() {
                 onChange={(e) => setSearch(e.target.value)}
                 className="h-9"
               />
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="h-9 w-[140px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">All Status</SelectItem>
+                  <SelectItem value="ACTIVE">Active</SelectItem>
+                  <SelectItem value="INACTIVE">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardHeader>
           <CardContent className="p-0">
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10"></TableHead>
                   <TableHead>Doctor</TableHead>
                   <TableHead>Department</TableHead>
                   <TableHead>Contact</TableHead>
@@ -178,11 +222,18 @@ export function Doctors() {
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Loading doctors...</TableCell></TableRow>
-                ) : data?.length === 0 ? (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No doctors found</TableCell></TableRow>
-                ) : data?.map((doctor) => (
-                  <TableRow key={doctor.id}>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Loading doctors...</TableCell></TableRow>
+                ) : doctors.length === 0 ? (
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No doctors found</TableCell></TableRow>
+                ) : doctors.map((doctor) => (
+                  <TableRow key={doctor.id} className={selectedIds.includes(doctor.id) ? "bg-primary/5 border-primary/30" : ""}>
+                    <TableCell>
+                      <button onClick={() => toggleOne(doctor.id, !selectedIds.includes(doctor.id))} className="flex items-center justify-center w-4 h-4">
+                        {selectedIds.includes(doctor.id)
+                          ? <CheckSquare className="w-4 h-4 text-primary" />
+                          : <Square className="w-4 h-4 text-primary" />}
+                      </button>
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
@@ -228,6 +279,30 @@ export function Doctors() {
           </CardContent>
         </Card>
       </div>
+      {selectedIds.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-2xl bg-slate-950 text-white px-4 py-3 shadow-2xl flex items-center gap-3">
+          <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-violet-600 px-2 text-sm font-semibold">{selectedIds.length}</span>
+          <span className="text-sm font-medium">doctors selected</span>
+          <Button size="sm" variant="outline" onClick={() => setSelectedIds([])}>Deselect</Button>
+          <Button size="sm" variant="destructive" onClick={() => setDeleteOpen(true)}>Delete all</Button>
+        </div>
+      )}
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete selected doctors?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You are deleting {selectedIds.length} selected doctor(s). This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteSelected} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete Selected
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AddDoctorDialog open={addOpen} onClose={() => setAddOpen(false)} onSuccess={invalidate} />
     </DashboardLayout>

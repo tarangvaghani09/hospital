@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Plus, Trash2, Pill, User, Stethoscope, Calendar } from "lucide-react";
+import { Plus, Trash2, Pill, User, Stethoscope, Calendar, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
 
@@ -294,13 +294,41 @@ export function Prescriptions() {
   const queryClient = useQueryClient();
   const [newOpen, setNewOpen] = useState(false);
   const [viewRx, setViewRx] = useState<any>(null);
+  const [search, setSearch] = useState("");
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const { data, isLoading } = useListPrescriptions(
     {},
     { query: { queryKey: getListPrescriptionsQueryKey({}) } }
   );
+  const prescriptions = (data ?? []).filter((rx: any) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+    return `${rx.patientName ?? ""} ${rx.doctorName ?? ""} ${rx.diagnosis ?? ""} ${rx.id}`.toLowerCase().includes(q);
+  });
 
   function invalidate() { queryClient.invalidateQueries({ queryKey: getListPrescriptionsQueryKey() }); }
+  function toggleSelectAll(checked: boolean) {
+    setSelectedIds(checked ? prescriptions.map((rx: any) => rx.id) : []);
+  }
+  function toggleOne(id: number, checked: boolean) {
+    setSelectedIds((prev) => checked ? [...prev, id] : prev.filter((x) => x !== id));
+  }
+  function bulkPrintSelected() {
+    const selected = prescriptions.filter((rx: any) => selectedIds.includes(rx.id));
+    if (selected.length === 0) return;
+    const w = window.open("", "_blank");
+    if (!w) return;
+    w.document.write(`<!DOCTYPE html><html><head><title>Prescriptions</title></head><body>
+      <h2>Selected Prescriptions</h2>
+      <table border="1" cellspacing="0" cellpadding="8">
+      <tr><th>ID</th><th>Date</th><th>Patient</th><th>Doctor</th><th>Diagnosis</th></tr>
+      ${selected.map((rx: any) => `<tr><td>#${rx.id}</td><td>${new Date(rx.createdAt).toLocaleDateString()}</td><td>${rx.patientName ?? ""}</td><td>${rx.doctorName ?? ""}</td><td>${rx.diagnosis ?? "-"}</td></tr>`).join("")}
+      </table>
+      <script>setTimeout(()=>window.print(),300)</script>
+      </body></html>`);
+    w.document.close();
+  }
 
   return (
     <DashboardLayout>
@@ -316,10 +344,25 @@ export function Prescriptions() {
         </div>
 
         <Card>
+          <div className="p-4">
+            <div className="flex items-center gap-2 max-w-md">
+              <Search className="w-4 h-4 text-muted-foreground" />
+              <Input placeholder="Filter prescriptions..." value={search} onChange={(e) => setSearch(e.target.value)} className="h-9" />
+            </div>
+            {selectedIds.length > 0 && (
+              <div className="mt-3 flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">{selectedIds.length} selected</span>
+                <Button size="sm" variant="outline" onClick={bulkPrintSelected}>Print Selected</Button>
+              </div>
+            )}
+          </div>
           <CardContent className="p-0">
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10">
+                    <input type="checkbox" checked={prescriptions.length > 0 && selectedIds.length === prescriptions.length} onChange={(e) => toggleSelectAll(e.target.checked)} />
+                  </TableHead>
                   <TableHead>ID</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Patient</TableHead>
@@ -331,11 +374,14 @@ export function Prescriptions() {
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Loading prescriptions...</TableCell></TableRow>
-                ) : data?.length === 0 ? (
-                  <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">No prescriptions found</TableCell></TableRow>
-                ) : data?.map((rx) => (
+                  <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">Loading prescriptions...</TableCell></TableRow>
+                ) : prescriptions.length === 0 ? (
+                  <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">No prescriptions found</TableCell></TableRow>
+                ) : prescriptions.map((rx) => (
                   <TableRow key={rx.id}>
+                    <TableCell>
+                      <input type="checkbox" checked={selectedIds.includes(rx.id)} onChange={(e) => toggleOne(rx.id, e.target.checked)} />
+                    </TableCell>
                     <TableCell className="font-medium text-muted-foreground">#{rx.id}</TableCell>
                     <TableCell className="text-muted-foreground">{new Date(rx.createdAt).toLocaleDateString()}</TableCell>
                     <TableCell className="font-medium">{rx.patientName}</TableCell>

@@ -2,16 +2,18 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useListReceptionists, getListReceptionistsQueryKey,
-  useCreateReceptionist, useUpdateReceptionist,
+  useCreateReceptionist, useUpdateReceptionist, useDeleteReceptionist,
 } from "@workspace/api-client-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Mail, Phone } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, Mail, Phone, CheckSquare, Square } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
@@ -156,15 +158,40 @@ function EditReceptionistDialog({
 export function Receptionists() {
   const queryClient = useQueryClient();
   const [addOpen, setAddOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("ALL");
   const [editOpen, setEditOpen] = useState(false);
   const [selected, setSelected] = useState<{ id: number; name: string; email: string; isActive?: boolean } | null>(null);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const deleteReceptionist = useDeleteReceptionist();
 
   const { data, isLoading } = useListReceptionists(
     { query: { queryKey: getListReceptionistsQueryKey() } }
   );
-  const receptionists = Array.isArray(data) ? data : [];
+  const receptionists = (Array.isArray(data) ? data : []).filter((s) => {
+    if (statusFilter === "ACTIVE") return s.isActive !== false;
+    if (statusFilter === "INACTIVE") return s.isActive === false;
+    return true;
+  });
 
   function invalidate() { queryClient.invalidateQueries({ queryKey: getListReceptionistsQueryKey() }); }
+  function toggleSelectAll(checked: boolean) {
+    setSelectedIds(checked ? receptionists.map((s) => s.id) : []);
+  }
+  function toggleOne(id: number, checked: boolean) {
+    setSelectedIds((prev) => checked ? [...prev, id] : prev.filter((x) => x !== id));
+  }
+  async function handleDeleteSelected() {
+    const ids = [...selectedIds];
+    const results = await Promise.allSettled(ids.map((id) => deleteReceptionist.mutateAsync({ id })));
+    const ok = results.filter((r) => r.status === "fulfilled").length;
+    const fail = results.length - ok;
+    if (ok) toast({ title: `Deleted ${ok} receptionist(s)` });
+    if (fail) toast({ variant: "destructive", title: `${fail} deletion(s) failed` });
+    setSelectedIds([]);
+    setDeleteOpen(false);
+    invalidate();
+  }
 
   return (
     <DashboardLayout>
@@ -174,16 +201,32 @@ export function Receptionists() {
             <h1 className="text-3xl font-bold tracking-tight">Receptionists</h1>
             <p className="text-muted-foreground mt-2">Manage front desk staff and access</p>
           </div>
-          <Button className="gap-2" onClick={() => setAddOpen(true)}>
-            <Plus className="w-4 h-4" /> Add Receptionist
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => toggleSelectAll(selectedIds.length !== receptionists.length)}>
+              Select all receptionists ({receptionists.length})
+            </Button>
+            <Button className="gap-2" onClick={() => setAddOpen(true)}>
+              <Plus className="w-4 h-4" /> Add Receptionist
+            </Button>
+          </div>
         </div>
 
         <Card>
           <CardContent className="p-0">
+            <div className="p-4 flex items-center gap-2">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="h-9 w-[140px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">All Status</SelectItem>
+                  <SelectItem value="ACTIVE">Active</SelectItem>
+                  <SelectItem value="INACTIVE">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10"></TableHead>
                   <TableHead>Staff Member</TableHead>
                   <TableHead>Contact</TableHead>
                   <TableHead>Joined</TableHead>
@@ -193,11 +236,18 @@ export function Receptionists() {
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Loading receptionists...</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Loading receptionists...</TableCell></TableRow>
                 ) : receptionists.length === 0 ? (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No receptionists found</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No receptionists found</TableCell></TableRow>
                 ) : receptionists.map((staff) => (
-                  <TableRow key={staff.id}>
+                  <TableRow key={staff.id} className={selectedIds.includes(staff.id) ? "bg-primary/5 border-primary/30" : ""}>
+                    <TableCell>
+                      <button onClick={() => toggleOne(staff.id, !selectedIds.includes(staff.id))} className="flex items-center justify-center w-4 h-4">
+                        {selectedIds.includes(staff.id)
+                          ? <CheckSquare className="w-4 h-4 text-primary" />
+                          : <Square className="w-4 h-4 text-primary" />}
+                      </button>
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-xs">
@@ -247,6 +297,30 @@ export function Receptionists() {
           </CardContent>
         </Card>
       </div>
+      {selectedIds.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-2xl bg-slate-950 text-white px-4 py-3 shadow-2xl flex items-center gap-3">
+          <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-violet-600 px-2 text-sm font-semibold">{selectedIds.length}</span>
+          <span className="text-sm font-medium">receptionists selected</span>
+          <Button size="sm" variant="outline" onClick={() => setSelectedIds([])}>Deselect</Button>
+          <Button size="sm" variant="destructive" onClick={() => setDeleteOpen(true)}>Delete all</Button>
+        </div>
+      )}
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete selected receptionists?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You are deleting {selectedIds.length} selected receptionist(s). This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteSelected} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete Selected
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AddReceptionistDialog open={addOpen} onClose={() => setAddOpen(false)} onSuccess={invalidate} />
       <EditReceptionistDialog open={editOpen} onClose={() => setEditOpen(false)} onSuccess={invalidate} receptionist={selected} />

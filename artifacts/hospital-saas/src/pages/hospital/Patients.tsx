@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Search, Plus, Mail, Phone, ChevronLeft, ChevronRight, Users } from "lucide-react";
+import { Search, Plus, Mail, Phone, ChevronLeft, ChevronRight, Users, CheckSquare, Square } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
@@ -123,8 +124,11 @@ function AddPatientDialog({ open, onClose, onSuccess }: { open: boolean; onClose
 export function Patients() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+  const [genderFilter, setGenderFilter] = useState("ALL");
   const [page, setPage] = useState(1);
   const [addOpen, setAddOpen] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const limit = 25;
 
   const { data, isLoading } = useListPatients(
@@ -137,7 +141,16 @@ export function Patients() {
   }
 
   const totalPages = Math.ceil((data?.total ?? 0) / limit);
-  const patients = data?.patients ?? [];
+  const patients = (data?.patients ?? []).filter((patient: any) => {
+    if (genderFilter === "ALL") return true;
+    return (patient.gender ?? "").toUpperCase() === genderFilter;
+  });
+  function toggleSelectAll(checked: boolean) {
+    setSelectedIds(checked ? patients.map((p: any) => p.id) : []);
+  }
+  function toggleOne(id: number, checked: boolean) {
+    setSelectedIds((prev) => checked ? [...prev, id] : prev.filter((x) => x !== id));
+  }
 
   return (
     <DashboardLayout>
@@ -147,14 +160,19 @@ export function Patients() {
             <h1 className="text-3xl font-bold tracking-tight">Patients</h1>
             <p className="text-muted-foreground mt-2">Manage patient records and history</p>
           </div>
-          <Button className="gap-2" onClick={() => setAddOpen(true)}>
-            <Plus className="w-4 h-4" /> Add Patient
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => toggleSelectAll(selectedIds.length !== patients.length)}>
+              Select all patients ({patients.length})
+            </Button>
+            <Button className="gap-2" onClick={() => setAddOpen(true)}>
+              <Plus className="w-4 h-4" /> Add Patient
+            </Button>
+          </div>
         </div>
 
         <Card>
           <CardHeader className="py-4">
-            <div className="flex items-center gap-2 max-w-sm">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
               <Search className="w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search by name, ID, or phone..."
@@ -162,12 +180,22 @@ export function Patients() {
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                 className="h-9"
               />
+              <Select value={genderFilter} onValueChange={setGenderFilter}>
+                <SelectTrigger className="h-9 w-[140px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">All Gender</SelectItem>
+                  <SelectItem value="MALE">Male</SelectItem>
+                  <SelectItem value="FEMALE">Female</SelectItem>
+                  <SelectItem value="OTHER">Other</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardHeader>
           <CardContent className="p-0">
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10"></TableHead>
                   <TableHead>Patient ID</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Contact</TableHead>
@@ -177,16 +205,23 @@ export function Patients() {
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Loading patients...</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Loading patients...</TableCell></TableRow>
                 ) : patients.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
+                    <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
                       <Users className="w-8 h-8 mx-auto mb-2 opacity-30" />
                       <p>No patients found</p>
                     </TableCell>
                   </TableRow>
                 ) : patients.map((patient: any) => (
-                  <TableRow key={patient.id}>
+                  <TableRow key={patient.id} className={selectedIds.includes(patient.id) ? "bg-primary/5 border-primary/30" : ""}>
+                    <TableCell>
+                      <button onClick={() => toggleOne(patient.id, !selectedIds.includes(patient.id))} className="flex items-center justify-center w-4 h-4">
+                        {selectedIds.includes(patient.id)
+                          ? <CheckSquare className="w-4 h-4 text-primary" />
+                          : <Square className="w-4 h-4 text-primary" />}
+                      </button>
+                    </TableCell>
                     <TableCell className="font-medium text-muted-foreground">{patient.patientId}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3">
@@ -242,6 +277,30 @@ export function Patients() {
           </div>
         )}
       </div>
+      {selectedIds.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-2xl bg-slate-950 text-white px-4 py-3 shadow-2xl flex items-center gap-3">
+          <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-violet-600 px-2 text-sm font-semibold">{selectedIds.length}</span>
+          <span className="text-sm font-medium">patients selected</span>
+          <Button size="sm" variant="outline" onClick={() => setSelectedIds([])}>Deselect</Button>
+          <Button size="sm" variant="destructive" onClick={() => setDeleteOpen(true)}>Delete all</Button>
+        </div>
+      )}
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete selected patients?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You selected {selectedIds.length} patient(s). Bulk delete is not available for patients in current API.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => { setDeleteOpen(false); }} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              OK
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AddPatientDialog open={addOpen} onClose={() => setAddOpen(false)} onSuccess={invalidate} />
     </DashboardLayout>

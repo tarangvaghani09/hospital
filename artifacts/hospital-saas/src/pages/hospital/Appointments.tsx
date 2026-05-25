@@ -504,11 +504,19 @@ export function Appointments() {
               {isDoctor ? "Your patient appointments" : "Manage all patient appointments"}
             </p>
           </div>
-          {!isDoctor && (
-            <Button className="gap-2" onClick={() => setBookOpen(true)}>
-              <Plus className="w-4 h-4" /> Book Appointment
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={toggleSelectAll}
+            >
+              Select all appointments ({appointments.length})
             </Button>
-          )}
+            {!isDoctor && (
+              <Button className="gap-2" onClick={() => setBookOpen(true)}>
+                <Plus className="w-4 h-4" /> Book Appointment
+              </Button>
+            )}
+          </div>
         </div>
 
         <Card>
@@ -586,35 +594,13 @@ export function Appointments() {
                   </div>
                 )}
               </div>
-              {selectedIds.size > 0 && (
-                <div className="flex items-center gap-3 py-2 px-3 bg-destructive/5 border border-destructive/20 rounded-lg">
-                  <span className="text-sm font-medium text-destructive">{selectedIds.size} selected</span>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    className="gap-1.5 h-7"
-                    onClick={() => setBulkDeleteOpen(true)}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" /> Delete Selected
-                  </Button>
-                  <Button variant="ghost" size="sm" className="h-7" onClick={() => setSelectedIds(new Set())}>
-                    Clear
-                  </Button>
-                </div>
-              )}
             </div>
           </CardHeader>
           <CardContent className="p-0">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-10">
-                    <button onClick={toggleSelectAll} className="flex items-center justify-center w-4 h-4">
-                      {selectedIds.size > 0 && selectedIds.size === appointments.length
-                        ? <CheckSquare className="w-4 h-4 text-primary" />
-                        : <Square className="w-4 h-4 text-muted-foreground" />}
-                    </button>
-                  </TableHead>
+                  <TableHead className="w-10"></TableHead>
                   <TableHead>Patient</TableHead>
                   <TableHead>Doctor</TableHead>
                   <TableHead>Date & Time</TableHead>
@@ -712,6 +698,14 @@ export function Appointments() {
           </CardContent>
         </Card>
       </div>
+      {selectedIds.size > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-2xl bg-slate-950 text-white px-4 py-3 shadow-2xl flex items-center gap-3">
+          <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-violet-600 px-2 text-sm font-semibold">{selectedIds.size}</span>
+          <span className="text-sm font-medium">appointments selected</span>
+          <Button size="sm" variant="outline" onClick={() => setSelectedIds(new Set())}>Deselect</Button>
+          <Button size="sm" variant="destructive" onClick={() => setBulkDeleteOpen(true)}>Delete all</Button>
+        </div>
+      )}
 
       <BookAppointmentDialog
         open={bookOpen}
