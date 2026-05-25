@@ -1,6 +1,8 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
@@ -34,19 +36,25 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           )}
         </div>
         <div className="flex items-center gap-4">
-          <div className="text-right mr-2 hidden sm:block">
-            <p className="text-sm font-medium leading-none">{user.name}</p>
-            <p className="text-xs text-muted-foreground mt-1">{roleLabels[user.role]}</p>
-          </div>
-          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary border border-primary/20">
-            {user.name.charAt(0).toUpperCase()}
-          </div>
-          <button
-            onClick={() => logout()}
-            className="ml-2 cursor-pointer text-sm font-medium text-destructive transition-colors hover:text-destructive/80"
-          >
-            Logout
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex min-w-[220px] items-center justify-between rounded-xl border border-border bg-transparent px-4 py-2 text-right outline-none transition-colors hover:border-border/80 hover:bg-muted/40 cursor-pointer">
+                <div className="text-center w-full">
+                  <p className="text-sm font-medium leading-none">{user.name}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{roleLabels[user.role]}</p>
+                </div>
+                <ChevronDown className="ml-3 h-4 w-4 shrink-0 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0 rounded-xl border border-border bg-popover p-1"
+            >
+              <DropdownMenuItem className="w-full cursor-pointer rounded-lg text-destructive focus:text-destructive" onClick={() => logout()}>
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
 
