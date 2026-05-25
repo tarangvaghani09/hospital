@@ -13,7 +13,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Mail, Phone, CheckSquare, Square, X } from "lucide-react";
+import { Plus, Mail, Phone, CheckSquare, Square, X, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
@@ -285,12 +285,13 @@ export function Receptionists() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="cursor-pointer"
+                        className="cursor-pointer gap-1.5"
                         onClick={() => {
                           setSelected({ id: staff.id, name: staff.name, email: staff.email, isActive: staff.isActive });
                           setEditOpen(true);
                         }}
                       >
+                        <Pencil className="w-3.5 h-3.5" />
                         Edit
                       </Button>
                     </TableCell>

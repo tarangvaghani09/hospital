@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Plus, Trash2, Pill, User, Stethoscope, Calendar, Search, CheckSquare, Square, X } from "lucide-react";
+import { Plus, Trash2, Pill, User, Stethoscope, Calendar, Search, CheckSquare, Square, X, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
 
@@ -411,7 +411,10 @@ export function Prescriptions() {
                       <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">{rx.medicines?.length || 0} med{(rx.medicines?.length ?? 0) !== 1 ? "s" : ""}</span>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" className="cursor-pointer" onClick={() => setViewRx(rx)}>View</Button>
+                      <Button variant="ghost" size="sm" className="cursor-pointer gap-1.5" onClick={() => setViewRx(rx)}>
+                        <Eye className="w-3.5 h-3.5" />
+                        View
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

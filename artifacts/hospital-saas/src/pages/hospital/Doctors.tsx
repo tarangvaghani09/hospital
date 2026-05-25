@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Plus, Mail, Phone, CheckSquare, Square, X } from "lucide-react";
+import { Search, Plus, Mail, Phone, CheckSquare, Square, X, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
@@ -273,7 +273,10 @@ export function Doctors() {
                     </TableCell>
                     <TableCell className="text-right">
                       <Link href={`/hospital/doctors/${doctor.id}`}>
-                        <Button variant="ghost" size="sm" className="cursor-pointer">View</Button>
+                        <Button variant="ghost" size="sm" className="cursor-pointer gap-1.5">
+                          <Eye className="w-3.5 h-3.5" />
+                          View
+                        </Button>
                       </Link>
                     </TableCell>
                   </TableRow>

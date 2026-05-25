@@ -12,7 +12,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Search, Plus, Mail, Phone, ChevronLeft, ChevronRight, Users, CheckSquare, Square, X } from "lucide-react";
+import { Search, Plus, Mail, Phone, ChevronLeft, ChevronRight, Users, CheckSquare, Square, X, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
@@ -256,7 +256,10 @@ export function Patients() {
                     </TableCell>
                     <TableCell className="text-right">
                       <Link href={`/hospital/patients/${patient.id}`}>
-                        <Button variant="ghost" size="sm" className="cursor-pointer">View</Button>
+                        <Button variant="ghost" size="sm" className="cursor-pointer gap-1.5">
+                          <Eye className="w-3.5 h-3.5" />
+                          View
+                        </Button>
                       </Link>
                     </TableCell>
                   </TableRow>
