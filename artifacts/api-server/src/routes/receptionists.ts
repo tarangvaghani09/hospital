@@ -38,12 +38,16 @@ router.patch("/receptionists/:id", authenticate, requireRoles("HOSPITAL_ADMIN"),
   if (!profile) { res.status(404).json({ error: "Receptionist not found" }); return; }
 
   const { name, phone, isActive } = req.body;
-  if (name || phone) await db.update(usersTable).set({ ...(name && { name }) }).where(eq(usersTable.id, profile.userId));
+  if (name !== undefined || phone !== undefined) {
+    await db.update(usersTable).set({
+      ...(name !== undefined && { name }),
+    }).where(eq(usersTable.id, profile.userId));
+  }
   if (isActive !== undefined) await db.update(receptionistProfilesTable).set({ isActive }).where(eq(receptionistProfilesTable.id, id));
 
   const [user] = await db.select().from(usersTable).where(eq(usersTable.id, profile.userId));
   const [updatedProfile] = await db.select().from(receptionistProfilesTable).where(eq(receptionistProfilesTable.id, id));
-  res.json({ id: updatedProfile.id, userId: updatedProfile.userId, name: user.name, email: user.email, phone: phone ?? null, isActive: updatedProfile.isActive, createdAt: updatedProfile.createdAt.toISOString() });
+  res.json({ id: updatedProfile.id, userId: updatedProfile.userId, name: user.name, email: user.email, phone: (user as any)?.phone ?? null, isActive: updatedProfile.isActive, createdAt: updatedProfile.createdAt.toISOString() });
 });
 
 router.delete("/receptionists/:id", authenticate, requireRoles("HOSPITAL_ADMIN"), async (req, res): Promise<void> => {

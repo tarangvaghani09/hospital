@@ -6,10 +6,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useParams } from "wouter";
 import { Mail, Phone, Clock, Stethoscope, Briefcase } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useCurrency } from "@/lib/currency";
 
 export function DoctorDetail() {
   const params = useParams();
   const doctorId = params.id ? parseInt(params.id) : 0;
+  const currency = useCurrency();
 
   const { data: doctor, isLoading: isDoctorLoading } = useGetDoctor(
     doctorId,
@@ -107,12 +109,12 @@ export function DoctorDetail() {
                     <span className="font-medium">{doctor.qualification}</span>
                   </div>
                 )}
-                {doctor.consultationFee && (
+                {doctor.consultationFee != null && (
                   <div className="flex items-center justify-between text-sm pt-2 border-t">
                     <div className="flex items-center gap-2 font-medium">
                       Consultation Fee
                     </div>
-                    <span className="font-bold">${doctor.consultationFee}</span>
+                    <span className="font-bold">{currency.format(doctor.consultationFee)}</span>
                   </div>
                 )}
               </div>

@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useListReceptionists, getListReceptionistsQueryKey,
-  useCreateReceptionist,
+  useCreateReceptionist, useUpdateReceptionist,
 } from "@workspace/api-client-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -85,13 +85,84 @@ function AddReceptionistDialog({ open, onClose, onSuccess }: { open: boolean; on
   );
 }
 
+function EditReceptionistDialog({
+  open, onClose, onSuccess, receptionist,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  receptionist: { id: number; name: string; email: string; isActive?: boolean } | null;
+}) {
+  const { toast } = useToast();
+  const mutation = useUpdateReceptionist();
+  const [name, setName] = useState("");
+  const [isActive, setIsActive] = useState(true);
+
+  useEffect(() => {
+    if (!open || !receptionist) return;
+    setName(receptionist.name);
+    setIsActive(receptionist.isActive !== false);
+  }, [open, receptionist]);
+
+  function handleSubmit() {
+    if (!receptionist) return;
+    if (!name.trim()) {
+      toast({ variant: "destructive", title: "Name is required" });
+      return;
+    }
+
+    mutation.mutate(
+      { id: receptionist.id, data: { name: name.trim(), isActive } },
+      {
+        onSuccess: () => {
+          toast({ title: "Receptionist updated" });
+          onSuccess();
+          onClose();
+        },
+        onError: (e: any) => toast({ variant: "destructive", title: "Error", description: e.message }),
+      },
+    );
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <DialogContent className="max-w-md">
+        <DialogHeader><DialogTitle>Edit Receptionist</DialogTitle></DialogHeader>
+        <div className="space-y-4 py-2">
+          <div className="space-y-1">
+            <Label>Full Name</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Staff full name" />
+          </div>
+          <div className="space-y-1">
+            <Label>Email</Label>
+            <Input value={receptionist?.email ?? ""} disabled />
+          </div>
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
+            Active
+          </label>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>Cancel</Button>
+          <Button onClick={handleSubmit} disabled={mutation.isPending}>
+            {mutation.isPending ? "Saving..." : "Save Changes"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export function Receptionists() {
   const queryClient = useQueryClient();
   const [addOpen, setAddOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [selected, setSelected] = useState<{ id: number; name: string; email: string; isActive?: boolean } | null>(null);
 
   const { data, isLoading } = useListReceptionists(
     { query: { queryKey: getListReceptionistsQueryKey() } }
   );
+  const receptionists = Array.isArray(data) ? data : [];
 
   function invalidate() { queryClient.invalidateQueries({ queryKey: getListReceptionistsQueryKey() }); }
 
@@ -123,9 +194,9 @@ export function Receptionists() {
               <TableBody>
                 {isLoading ? (
                   <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Loading receptionists...</TableCell></TableRow>
-                ) : data?.length === 0 ? (
+                ) : receptionists.length === 0 ? (
                   <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No receptionists found</TableCell></TableRow>
-                ) : data?.map((staff) => (
+                ) : receptionists.map((staff) => (
                   <TableRow key={staff.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
@@ -158,7 +229,16 @@ export function Receptionists() {
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm">Edit</Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setSelected({ id: staff.id, name: staff.name, email: staff.email, isActive: staff.isActive });
+                          setEditOpen(true);
+                        }}
+                      >
+                        Edit
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -169,6 +249,7 @@ export function Receptionists() {
       </div>
 
       <AddReceptionistDialog open={addOpen} onClose={() => setAddOpen(false)} onSuccess={invalidate} />
+      <EditReceptionistDialog open={editOpen} onClose={() => setEditOpen(false)} onSuccess={invalidate} receptionist={selected} />
     </DashboardLayout>
   );
 }
