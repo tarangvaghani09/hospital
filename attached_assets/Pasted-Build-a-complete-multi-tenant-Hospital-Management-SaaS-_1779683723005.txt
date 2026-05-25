@@ -1,0 +1,564 @@
+Build a complete multi-tenant Hospital Management SaaS web application.
+
+Create a premium, luxury, modern, enterprise-level UI/UX design for a multi-tenant Hospital Management SaaS web application.
+
+use npm package no use pnpm
+
+Design Goal:
+Make the UI look like a high-end $1,000,000 SaaS product.
+The design should feel premium, clean, modern, trustworthy, medical, enterprise-grade, and suitable for real hospitals and clinics.
+
+Main Goal:
+Create one SaaS platform where multiple hospitals/clinics can register and use the same system.
+Do not create separate code for every hospital.
+Use one codebase, one backend, and one database.
+Each hospital must have separate data using hospitalId.
+
+Important:
+Do not create a basic admin panel.
+Do not use simple Bootstrap-style design.
+Do not make it look like a student project.
+The UI should look like a premium SaaS product used by real hospitals.
+
+Example:
+Hospital A should only see Hospital A doctors, patients, invoices, appointments, reports, and settings.
+Hospital B should only see Hospital B data.
+Hospital A data should never mix with Hospital B data.
+
+Technology Stack:
+
+Frontend:
+- React.js
+- Tailwind CSS
+- shadcn/ui
+- React Router
+- Axios
+- React Hook Form
+- Zod validation
+- FullCalendar React for calendar appointment view
+- date-fns for date formatting
+- Recharts or Chart.js for dashboard charts
+
+Backend:
+- Node.js
+- Express.js
+- PostgreSQL
+- Prisma ORM
+- JWT authentication
+- Bcrypt password hashing
+- Role-based access control
+- Zod validation
+- Multer for file upload
+- Cloudinary / AWS S3 / Supabase Storage for image/file storage
+- PDFKit or Puppeteer for invoice, prescription, appointment slip, and report PDF generation
+- Nodemailer for email notification
+- Razorpay or Stripe for subscription/payment support
+
+Database:
+- PostgreSQL with Prisma ORM
+- Use hospitalId in every hospital-related table
+- Never take hospitalId from frontend for normal hospital users
+- Get hospitalId from logged-in user JWT token
+
+Required Panels:
+
+1. Super Admin Panel
+For SaaS owner.
+
+Features:
+- Login
+- Dashboard
+- View total hospitals
+- View active hospitals
+- View expired subscriptions
+- View monthly revenue
+- Manage hospitals
+- Approve/reject hospital registration
+- Activate/deactivate hospital
+- Create subscription plans
+- Edit package price and features
+- View payment history
+- View global reports
+- Manage support tickets
+
+2. Hospital Admin Panel
+For hospital owner/admin.
+
+Features:
+- Dashboard
+- Manage doctors
+- Manage receptionists
+- Manage patients
+- Manage departments
+- Manage appointments
+- Manage invoices
+- Manage prescriptions
+- View reports
+- View subscription plan
+- Upgrade/downgrade package
+- Manage hospital profile
+- Manage hospital branding
+- Upload logo
+- Upload signature
+- Upload stamp
+- Upload letterhead
+- Customize invoice format
+- Customize prescription format
+- Customize appointment slip format
+- Manage custom domain/subdomain
+- View doctor-wise billing report
+- View calendar appointment page
+
+3. Receptionist Panel
+For front desk staff.
+
+Features:
+- Add patient
+- Search patient by name/mobile/patient ID
+- Book doctor appointment
+- Manage walk-in patients
+- Generate appointment token
+- Generate invoice
+- Mark payment paid/unpaid/partial
+- Print/download invoice
+- View daily collection
+- View today appointments
+- View calendar appointment page
+- Book appointment from calendar time slot
+- View doctor-wise collection if permission enabled
+
+4. Doctor Panel
+For doctors.
+
+Features:
+- View today appointments
+- View waiting patients
+- View own calendar
+- View patient details
+- View patient history
+- Add symptoms
+- Add diagnosis
+- Add prescription
+- Add medicines, dosage, timing, duration
+- Add follow-up date
+- Mark appointment completed
+- Download/print prescription
+- View own billing summary if hospital allows
+
+5. Patient Panel
+For patients.
+
+Features:
+- Register/login
+- Book appointment
+- View upcoming appointments
+- View past appointments
+- Cancel/reschedule appointment if allowed
+- View invoice
+- Download receipt
+- View prescription
+- View medical history
+
+Subscription Package Logic:
+
+Create package-wise access system.
+
+Example Plans:
+
+Basic Plan:
+- Maximum 2 doctors
+- Maximum 2 receptionists
+- Maximum 500 patients
+- Appointment module
+- Patient management
+- Invoice module
+- Prescription module
+- Basic reports
+
+Standard Plan:
+- Maximum 10 doctors
+- Maximum 5 receptionists
+- Maximum 5000 patients
+- Appointment module
+- Patient management
+- Invoice module
+- Prescription module
+- Email reminders
+- Advanced reports
+- Staff management
+
+Premium Plan:
+- Unlimited doctors
+- Unlimited receptionists
+- Unlimited patients
+- Appointment module
+- Patient management
+- Invoice module
+- Prescription module
+- Pharmacy module
+- Lab module
+- Bed management
+- WhatsApp reminders
+- Advanced reports
+- Staff management
+- Multi-branch support
+- Inventory module
+
+Package Access Rules:
+- Check doctor limit before creating doctor
+- Check receptionist limit before creating receptionist
+- Check patient limit before creating patient
+- Check feature permission before opening pharmacy/lab/bed/advanced reports
+- If subscription expired, block access and show renewal page
+
+Required Middleware:
+- verifyToken
+- checkRole
+- checkSubscriptionActive
+- checkFeatureAccess
+- checkUsageLimit
+
+Roles:
+- SUPER_ADMIN
+- HOSPITAL_ADMIN
+- DOCTOR
+- RECEPTIONIST
+- PATIENT
+
+Custom Branding Features:
+
+Each hospital should have its own:
+- Logo
+- Theme color
+- Invoice format
+- Prescription format
+- Appointment slip format
+- Signature
+- Stamp
+- Letterhead
+- Custom domain/subdomain
+
+Hospital Admin can manage:
+- Hospital name
+- Email
+- Phone
+- Address
+- Registration number
+- GST number optional
+- Website URL
+- Emergency phone
+- Description
+- Logo upload/edit/remove
+- Signature upload/edit/remove
+- Stamp upload/edit/remove
+- Letterhead upload/edit/remove
+- Theme colors
+- Invoice settings
+- Prescription settings
+- Appointment slip settings
+
+Storage Rule:
+Do not store actual image files directly in PostgreSQL.
+Store images/files in Cloudinary, AWS S3, Supabase Storage, or local uploads during development.
+Save only file URL/path in PostgreSQL.
+
+Invoice Features:
+
+Receptionist can generate invoice with:
+- Consultation fee
+- Lab fee
+- Medicine fee
+- Room charge
+- Other charge
+- Discount
+- Tax/GST
+- Payment status: PAID, UNPAID, PARTIAL
+- Payment method: CASH, UPI, CARD, ONLINE
+
+Invoice PDF should include:
+- Hospital logo
+- Hospital name
+- Address
+- Phone/email
+- GST number if enabled
+- Invoice number
+- Invoice date
+- Patient details
+- Doctor details optional
+- Appointment details optional
+- Invoice item table
+- Subtotal
+- Discount
+- Tax/GST
+- Final amount
+- Paid amount
+- Due amount
+- Payment method
+- Payment status
+- QR code if enabled
+- Signature if uploaded and enabled
+- Stamp if uploaded and enabled
+- Footer note
+- Terms and conditions
+
+Invoice Number Logic:
+- Generate invoice number hospital-wise
+- Use hospitalId
+- Hospital A invoice sequence should not affect Hospital B invoice sequence
+
+Example:
+Hospital A:
+CITY-INV-1001
+CITY-INV-1002
+
+Hospital B:
+LIFE-BILL-5001
+LIFE-BILL-5002
+
+Prescription Features:
+
+Doctor can generate branded prescription PDF with:
+- Hospital logo
+- Hospital name
+- Hospital address/contact
+- Doctor name
+- Doctor specialization
+- Patient details
+- Symptoms
+- Diagnosis
+- Medicine table
+- Advice
+- Follow-up date
+- Doctor signature if uploaded/enabled
+- Footer note
+
+Appointment Slip / Token Features:
+
+Receptionist can generate appointment slip with:
+- Hospital logo
+- Hospital name
+- Patient name
+- Doctor name
+- Department
+- Appointment date/time
+- Token number
+- Room number
+- Instructions
+
+Doctor-Wise Billing Report Feature:
+
+Hospital Admin should be able to see how much billing/revenue is generated by each doctor monthly, weekly, daily, custom date range, and filter-wise.
+
+Doctor Billing Report should show:
+- Doctor name
+- Doctor specialization
+- Department name
+- Total appointments
+- Completed appointments
+- Cancelled appointments
+- Total invoices generated
+- Total consultation revenue
+- Total lab revenue if invoice item exists
+- Total medicine revenue if invoice item exists
+- Total room charges if invoice item exists
+- Total other charges
+- Total discount
+- Total tax/GST
+- Final billed amount
+- Paid amount
+- Unpaid amount
+- Partial payment amount
+- Due amount
+- Cash total
+- UPI total
+- Card total
+- Online total
+
+Billing Filters:
+- Today
+- Yesterday
+- This week
+- Last week
+- This month
+- Last month
+- Custom date range
+- All doctors
+- Single doctor
+- Multiple doctors optional
+- Department
+- Payment status
+- Payment method
+- Appointment status
+
+Billing Report Flow:
+1. Hospital Admin opens Reports page.
+2. Opens Doctor Billing tab.
+3. Selects month or custom date range.
+4. Selects doctor or all doctors.
+5. Selects department optional.
+6. Selects payment status optional.
+7. Selects payment method optional.
+8. System shows doctor-wise billing summary.
+9. Admin can view detailed invoice list.
+10. Admin can generate billing report.
+11. Admin can download/print billing report as PDF.
+12. Admin can export CSV/Excel optional.
+
+Calendar Appointment View Feature:
+
+Add one calendar page similar to Google Calendar for easy appointment viewing and booking.
+
+Calendar pages:
+- /hospital-admin/calendar
+- /receptionist/calendar
+- /doctor/calendar
+
+Calendar Views:
+- Month view
+- Week view
+- Day view
+- Doctor-wise view
+
+Calendar should show:
+- Appointment count per day
+- Time-wise appointments
+- Busy slots
+- Free slots
+- Doctor-wise schedule
+- Appointment cards
+
+Calendar Appointment Card should show:
+- Patient name
+- Doctor name
+- Department
+- Appointment time
+- Token number
+- Appointment status
+- Payment status optional
+- Appointment type: Online booking, Walk-in, Follow-up
+
+Calendar Filters:
+- Doctor
+- Department
+- Appointment status
+- Payment status
+- Appointment type
+- Date range
+
+Calendar Booking Flow:
+1. Receptionist opens Calendar page.
+2. Selects doctor.
+3. Selects date.
+4. Sees available and booked time slots.
+5. Clicks empty time slot.
+6. Booking modal opens.
+7. Selects existing patient or adds new patient.
+8. Selects appointment type.
+9. Confirms booking.
+10. System generates token number.
+11. Calendar updates immediately.
+
+Calendar Drag/Reschedule Flow optional:
+1. User drags appointment to another time slot.
+2. System checks doctor availability.
+3. If available, update appointment time.
+4. If not available, show message:
+"This slot is already booked. Please select another time."
+
+Doctor Schedule Logic:
+Doctor schedule should define:
+- Available days
+- Start time
+- End time
+- Break time
+- Slot duration
+- Max patients per slot optional
+
+Calendar Security:
+- Calendar data must be filtered by hospitalId
+- Hospital A calendar should never show Hospital B bookings
+- Doctor should see only own calendar unless permission is enabled
+- Patient should not access staff calendar
+- Prevent double booking for same doctor and same time slot unless hospital setting allows multiple patients per slot
+
+Recommended Calendar Libraries:
+- @fullcalendar/react
+- @fullcalendar/daygrid
+- @fullcalendar/timegrid
+- @fullcalendar/interaction
+- date-fns
+
+Required Main Database Models:
+- User
+- Hospital
+- HospitalSetting
+- HospitalFeature
+- SubscriptionPlan
+- HospitalSubscription
+- Department
+- DoctorProfile
+- ReceptionistProfile
+- PatientProfile
+- DoctorSchedule
+- Appointment
+- Prescription
+- PrescriptionMedicine
+- Invoice
+- InvoiceItem
+- Payment
+- Notification
+- AuditLog
+- SupportTicket
+
+Important HospitalSetting Fields:
+- invoicePrefix
+- invoiceStartNumber
+- prescriptionPrefix
+- tokenPrefix
+- taxEnabled
+- defaultTaxPercentage
+- discountEnabled
+- invoiceFooterNote
+- invoiceTerms
+- prescriptionFooterNote
+- invoiceTemplateType
+- prescriptionTemplateType
+- appointmentSlipTemplateType
+- showLogoOnInvoice
+- showGSTOnInvoice
+- showDoctorOnInvoice
+- showPatientAddressOnInvoice
+- showPaymentMethodOnInvoice
+- showQRCodeOnInvoice
+- showSignatureOnInvoice
+- showStampOnInvoice
+- showLogoOnPrescription
+- showDoctorSignatureOnPrescription
+- showFollowUpDateOnPrescription
+- showLogoOnAppointmentSlip
+- signatureImage
+- stampImage
+- letterheadImage
+- calendarSlotDuration
+- allowMultiplePatientsPerSlot
+- maxPatientsPerSlot
+- allowCalendarDragReschedule
+- allowDoctorViewOwnBilling
+- allowReceptionistViewBillingReports
+
+Security Requirements:
+- Password should be hashed with bcrypt
+- Use JWT authentication
+- Use role-based access
+- Use hospitalId-based data isolation
+- Validate all input using Zod
+- Use rate limiting
+- Use Helmet security headers
+- Use proper CORS configuration
+- Add audit logs for important actions
+- Prevent hospital users from accessing other hospital data
+- Every API must use hospitalId from JWT token
+- Never accept hospitalId directly from frontend for normal hospital users
+
+Goal:
+Create a production-ready multi-tenant Hospital Management SaaS platform where one codebase can serve many hospitals with separate data, package-wise access, custom branding, invoice/prescription PDF generation, doctor-wise billing reports, and Google Calendar-like appointment management.

@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "MediCore Hospital SaaS"
+version = "1.0.0"
+id = "artifacts/hospital-saas"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21201
+
+[services.development]
+run = "pnpm --filter @workspace/hospital-saas run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/hospital-saas", "run", "build" ]
+publicDir = "artifacts/hospital-saas/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21201"
+BASE_PATH = "/"
