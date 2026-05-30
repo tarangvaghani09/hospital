@@ -157,20 +157,20 @@ export function Departments() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 pb-5 sm:pb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Departments</h1>
             <p className="text-muted-foreground mt-2">Manage hospital departments and categories</p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button className="gap-2 px-3" variant="outline" onClick={() => toggleSelectAll(selectedIds.length !== departments.length)}>
+          <div className="flex w-full sm:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end">
+            <Button className="gap-2 px-3 w-full sm:w-auto" variant="outline" onClick={() => toggleSelectAll(selectedIds.length !== departments.length)}>
               {selectedIds.length === departments.length && departments.length > 0
                 ? <CheckSquare className="w-4 h-4 text-purple-600" />
                 : <Square className="w-4 h-4 text-slate-500" />}
               {selectedIds.length === departments.length && departments.length > 0 ? "Deselect all" : `Select all departments (${departments.length})`}
             </Button>
-            <Button className="gap-2 cursor-pointer" onClick={() => { setEditing(null); setDialogOpen(true); }}>
+            <Button className="gap-2 cursor-pointer w-full sm:w-auto" onClick={() => { setEditing(null); setDialogOpen(true); }}>
               <Plus className="w-4 h-4" /> Add Department
             </Button>
           </div>
@@ -179,7 +179,7 @@ export function Departments() {
         <Card>
           <div className="p-4 flex items-center gap-2">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="h-9 w-[140px]"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-9 w-full sm:w-[140px]"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="ALL">All Status</SelectItem>
                 <SelectItem value="ACTIVE">Active</SelectItem>
@@ -187,8 +187,8 @@ export function Departments() {
               </SelectContent>
             </Select>
           </div>
-          <CardContent className="p-0">
-            <Table>
+          <CardContent className="p-0 overflow-x-auto">
+            <Table className="min-w-[760px] sm:min-w-full">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-10"></TableHead>

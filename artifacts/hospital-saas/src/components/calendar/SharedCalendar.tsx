@@ -104,17 +104,17 @@ export function SharedCalendar() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 pb-5 sm:pb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Calendar</h1>
             <p className="text-muted-foreground mt-2">Weekly view of all appointments · Click any appointment to view details</p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={today} size="sm">Today</Button>
-            <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
+          <div className="flex w-full sm:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <Button variant="outline" onClick={today} size="sm" className="w-full sm:w-auto">Today</Button>
+            <div className="flex w-full sm:w-auto items-center gap-1 bg-muted rounded-lg p-1">
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={prevWeek}><ChevronLeft className="h-4 w-4" /></Button>
-              <div className="text-sm font-semibold w-36 text-center">{format(currentDate, 'MMMM yyyy')}</div>
+              <div className="text-sm font-semibold flex-1 sm:w-36 text-center">{format(currentDate, 'MMMM yyyy')}</div>
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={nextWeek}><ChevronRight className="h-4 w-4" /></Button>
             </div>
           </div>
@@ -129,7 +129,8 @@ export function SharedCalendar() {
                 <Skeleton className="h-40 w-full" />
               </div>
             ) : (
-              <div className="flex flex-col h-[700px] overflow-auto">
+              <div className="h-[700px] overflow-auto">
+                <div className="min-w-[760px]">
                 {/* Header */}
                 <div className="grid grid-cols-8 border-b sticky top-0 bg-card z-10 shadow-sm">
                   <div className="p-3 border-r flex items-center justify-center text-xs font-medium text-muted-foreground bg-muted/30">
@@ -192,6 +193,7 @@ export function SharedCalendar() {
                       })}
                     </div>
                   ))}
+                </div>
                 </div>
               </div>
             )}

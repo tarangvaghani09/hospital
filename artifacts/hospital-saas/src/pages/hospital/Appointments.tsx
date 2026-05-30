@@ -519,7 +519,7 @@ export function Appointments() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 pb-5 sm:pb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Appointments</h1>
@@ -527,10 +527,10 @@ export function Appointments() {
               {isDoctor ? "Your patient appointments" : "Manage all patient appointments"}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full sm:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end">
             <Button
               variant="outline"
-              className="gap-2 px-3"
+              className="gap-2 px-3 w-full sm:w-auto"
               onClick={toggleSelectAll}
             >
               {selectedIds.size === appointments.length && appointments.length > 0
@@ -539,7 +539,7 @@ export function Appointments() {
               {selectedIds.size === appointments.length && appointments.length > 0 ? "Deselect all" : `Select all appointments (${appointments.length})`}
             </Button>
             {!isDoctor && (
-              <Button className="gap-2 cursor-pointer" onClick={() => setBookOpen(true)}>
+              <Button className="gap-2 cursor-pointer w-full sm:w-auto" onClick={() => setBookOpen(true)}>
                 <Plus className="w-4 h-4" /> Book Appointment
               </Button>
             )}
@@ -560,7 +560,7 @@ export function Appointments() {
                   />
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-[160px]">
+                  <SelectTrigger className="w-full sm:w-[160px]">
                     <SelectValue placeholder="All Statuses" />
                   </SelectTrigger>
                   <SelectContent>
@@ -574,7 +574,7 @@ export function Appointments() {
                   </SelectContent>
                 </Select>
                 <Select value={departmentFilter} onValueChange={(v) => { setDepartmentFilter(v); if (!isDoctor) setDoctorFilter(""); }}>
-                  <SelectTrigger className="w-[160px]">
+                  <SelectTrigger className="w-full sm:w-[160px]">
                     <SelectValue placeholder="All Departments" />
                   </SelectTrigger>
                   <SelectContent>
@@ -586,7 +586,7 @@ export function Appointments() {
                 </Select>
                 {!isDoctor && (
                   <Select value={doctorFilter} onValueChange={setDoctorFilter}>
-                    <SelectTrigger className="w-[160px]">
+                    <SelectTrigger className="w-full sm:w-[160px]">
                       <SelectValue placeholder="All Doctors" />
                     </SelectTrigger>
                     <SelectContent>
