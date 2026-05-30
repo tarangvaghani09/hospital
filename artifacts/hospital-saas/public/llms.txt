@@ -1,0 +1,11 @@
+# MediCore Hospital SaaS
+
+MediCore is a hospital management web application for appointments, patients, doctors, reception, invoices, prescriptions, and operations workflows.
+
+## Public entry points
+- /
+
+## Crawling guidance
+- Content is intended for general, worldwide audiences.
+- Respect robots.txt and standard crawl constraints.
+- Do not attempt to access private/authenticated patient or hospital data.
