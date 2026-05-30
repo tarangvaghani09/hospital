@@ -21,6 +21,7 @@ import { Plus, Trash2, Pill, User, Stethoscope, Calendar, Search, CheckSquare, S
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { createPrescriptionSchema } from "@/lib/validations/prescription";
 
 interface Medicine {
   name: string;
@@ -62,9 +63,19 @@ function NewPrescriptionDialog({ open, onClose, onSuccess }: { open: boolean; on
   function removeMed(i: number) { setMedicines(p => p.filter((_, idx) => idx !== i)); }
 
   function handleSubmit() {
-    if (!patientId) { toast({ variant: "destructive", title: "Patient is required" }); return; }
-    if (!isDoctor && !doctorId) { toast({ variant: "destructive", title: "Doctor is required" }); return; }
-    if (medicines.some(m => !m.name.trim())) { toast({ variant: "destructive", title: "All medicines need a name" }); return; }
+    const parsed = createPrescriptionSchema.safeParse({
+      patientId,
+      doctorId,
+      isDoctor,
+      symptoms,
+      diagnosis,
+      medicines,
+      followUpDate,
+    });
+    if (!parsed.success) {
+      toast({ variant: "destructive", title: parsed.error.issues[0]?.message ?? "Invalid input" });
+      return;
+    }
 
     mutation.mutate({
       data: {
@@ -93,7 +104,7 @@ function NewPrescriptionDialog({ open, onClose, onSuccess }: { open: boolean; on
               <Input placeholder="Search patient..." value={patientSearch} onChange={(e) => setPatientSearch(e.target.value)} className="mb-1" />
               <Select value={patientId} onValueChange={setPatientId}>
                 <SelectTrigger><SelectValue placeholder="Select patient" /></SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-64 overflow-y-auto">
                   {patientsData?.patients?.map((p: any) => (
                     <SelectItem key={p.id} value={String(p.id)}>{p.name}{p.phone ? ` — ${p.phone}` : ""}</SelectItem>
                   ))}
@@ -105,7 +116,7 @@ function NewPrescriptionDialog({ open, onClose, onSuccess }: { open: boolean; on
                 <Label>Doctor <span className="text-red-500">*</span></Label>
                 <Select value={doctorId} onValueChange={setDoctorId}>
                   <SelectTrigger><SelectValue placeholder="Select doctor" /></SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-64 overflow-y-auto">
                     {doctors?.map((d: any) => (
                       <SelectItem key={d.id} value={String(d.id)}>Dr. {d.name}{d.specialization ? ` — ${d.specialization}` : ""}</SelectItem>
                     ))}
@@ -162,7 +173,7 @@ function NewPrescriptionDialog({ open, onClose, onSuccess }: { open: boolean; on
             </div>
             <div className="space-y-1">
               <Label>Follow-up Date</Label>
-              <Input type="date" value={followUpDate} onChange={(e) => setFollowUpDate(e.target.value)} />
+              <Input type="date" min={new Date().toISOString().split("T")[0]} value={followUpDate} onChange={(e) => setFollowUpDate(e.target.value)} />
             </div>
           </div>
         </div>
@@ -471,3 +482,5 @@ export function Prescriptions() {
     </DashboardLayout>
   );
 }
+
+
