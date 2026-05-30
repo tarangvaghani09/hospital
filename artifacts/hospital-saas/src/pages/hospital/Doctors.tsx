@@ -200,16 +200,16 @@ export function Doctors() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 pb-5 sm:pb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Doctors</h1>
             <p className="text-muted-foreground mt-2">Manage hospital doctors and their schedules</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full sm:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end">
             <Button
               variant="outline"
-              className="gap-2 px-3"
+              className="gap-2 px-3 w-full sm:w-auto"
               onClick={() => toggleSelectAll(selectedIds.length !== doctors.length)}
             >
               {selectedIds.length === doctors.length && doctors.length > 0
@@ -217,7 +217,7 @@ export function Doctors() {
                 : <Square className="w-4 h-4 text-slate-500" />}
               {selectedIds.length === doctors.length && doctors.length > 0 ? "Deselect all" : `Select all doctors (${doctors.length})`}
             </Button>
-            <Button className="gap-2 cursor-pointer" onClick={() => setAddOpen(true)}>
+            <Button className="gap-2 cursor-pointer w-full sm:w-auto" onClick={() => setAddOpen(true)}>
               <Plus className="w-4 h-4" /> Add Doctor
             </Button>
           </div>

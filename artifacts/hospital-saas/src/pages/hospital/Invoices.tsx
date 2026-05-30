@@ -333,7 +333,7 @@ export function CreateInvoiceDialog({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>Create Invoice</DialogTitle></DialogHeader>
         <div className="space-y-4 py-2">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label>Patient <span className="text-red-500">*</span></Label>
               <Input placeholder="Search..." value={patientSearch} onChange={(e) => setPatientSearch(e.target.value)} className="mb-1" />
@@ -367,7 +367,7 @@ export function CreateInvoiceDialog({
             </div>
             <div className="space-y-2">
               {items.map((item, i) => (
-                <div key={i} className="grid grid-cols-[1fr_120px_80px_80px_100px_32px] gap-2 items-center">
+                <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_120px_80px_80px_100px_32px] gap-2 items-center">
                   <Input placeholder="Description" value={item.description} onChange={(e) => updateItem(i, "description", e.target.value)} />
                   <Select value={item.category} onValueChange={(v) => updateItem(i, "category", v)}>
                     <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
@@ -404,7 +404,7 @@ export function CreateInvoiceDialog({
           </div>
 
           <Separator />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label>Discount (₹)</Label>
               <Input type="number" value={discountAmount || ""} onChange={(e) => setDiscountAmount(parseFloat(e.target.value) || 0)} min={0} />
@@ -420,7 +420,7 @@ export function CreateInvoiceDialog({
             {taxAmount > 0 && <div className="flex justify-between"><span className="text-muted-foreground">Tax ({taxPercentage}%)</span><span>₹{taxAmount.toFixed(2)}</span></div>}
             <div className="flex justify-between font-semibold text-base pt-1 border-t"><span>Total</span><span>₹{totalAmount.toFixed(2)}</span></div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label>Paid Amount (₹)</Label>
               <Input type="number" value={paidAmount || ""} onChange={(e) => setPaidAmount(parseFloat(e.target.value) || 0)} min={0} />
@@ -723,13 +723,13 @@ function InvoicePreviewDialog({ invoiceId, open, onClose }: { invoiceId: number 
     <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle>Invoice Preview</DialogTitle>
-            <div className="flex gap-2 mr-6">
-              <Button variant="outline" size="sm" onClick={handleWhatsApp} className="gap-1.5">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <DialogTitle className="text-center sm:text-left">Invoice Preview</DialogTitle>
+            <div className="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex sm:flex-wrap sm:mr-6">
+              <Button variant="outline" size="sm" onClick={handleWhatsApp} className="gap-1.5 w-full">
                 <MessageCircle className="w-4 h-4" /> WhatsApp
               </Button>
-              <Button variant="outline" size="sm" onClick={handlePrint} className="gap-1.5">
+              <Button variant="outline" size="sm" onClick={handlePrint} className="gap-1.5 w-full">
                 <Printer className="w-4 h-4" /> Print
               </Button>
             </div>
@@ -739,7 +739,7 @@ function InvoicePreviewDialog({ invoiceId, open, onClose }: { invoiceId: number 
         {!inv ? (
           <div className="py-8 text-center text-muted-foreground">Loading invoice...</div>
         ) : (
-          <div ref={printRef} className="font-sans text-sm text-foreground">
+          <div ref={printRef} className="font-sans text-sm text-foreground overflow-x-hidden">
             {/* Logo Header — position-aware */}
             {(() => {
               const logoSrc = (hospitalProfile as any)?.logoUrl || displaySettings.logoBase64 || "";
@@ -772,28 +772,28 @@ function InvoicePreviewDialog({ invoiceId, open, onClose }: { invoiceId: number 
               if (pos === "header" && logoImg) return (
                 <div className="mb-6">
                   <div className="w-full bg-muted/30 border rounded-lg p-3 flex justify-center mb-4">{logoImg}</div>
-                  <div className="flex justify-between items-start">{hospitalInfo}{invMeta}</div>
+                  <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-start min-w-0">{hospitalInfo}{invMeta}</div>
                 </div>
               );
               if (pos === "right" && logoImg) return (
-                <div className="flex justify-between items-start mb-6">
+                <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-start mb-6 min-w-0">
                   {hospitalInfo}
                   <div className="flex flex-col items-end gap-2">{logoImg}{invMeta}</div>
                 </div>
               );
               return (
-                <div className="flex justify-between items-start mb-6">
+                <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-start mb-6 min-w-0">
                   <div>{logoImg && <div className="mb-2">{logoImg}</div>}{hospitalInfo}</div>
                   {invMeta}
                 </div>
               );
             })()}
 
-            <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               <div className="bg-muted/40 rounded-lg p-4 border">
                 <div className="text-xs font-semibold uppercase text-muted-foreground mb-2 tracking-wide" style={{ color: accent }}>Bill To</div>
-                <div className="font-semibold">{inv.patientName}</div>
-                {inv.patientPhone && <div className="text-xs text-muted-foreground">{inv.patientPhone}</div>}
+                <div className="font-semibold break-words">{inv.patientName}</div>
+                {inv.patientPhone && <div className="text-xs text-muted-foreground break-all">{inv.patientPhone}</div>}
               </div>
               {inv.doctorName && (
                 <div className="bg-muted/40 rounded-lg p-4 border">
@@ -803,7 +803,8 @@ function InvoicePreviewDialog({ invoiceId, open, onClose }: { invoiceId: number 
               )}
             </div>
 
-            <table className="w-full border-collapse mb-6">
+            <div className="overflow-x-auto mb-6">
+            <table className="w-full min-w-[680px] border-collapse">
               <thead>
                 <tr className="bg-muted/60">
                   <th className="text-left py-2.5 px-3 text-xs font-semibold uppercase text-muted-foreground">#</th>
@@ -827,6 +828,7 @@ function InvoicePreviewDialog({ invoiceId, open, onClose }: { invoiceId: number 
                 ))}
               </tbody>
             </table>
+            </div>
 
             <div className="flex justify-end mb-6">
               <div className="min-w-[260px] space-y-1.5 text-sm">
@@ -932,17 +934,17 @@ export function Invoices() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 pb-5 sm:pb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Invoices</h1>
             <p className="text-muted-foreground mt-2">Manage patient billing and payments</p>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" className="gap-1.5" onClick={() => setSettingsOpen(true)}>
+          <div className="flex w-full sm:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end">
+            <Button variant="outline" className="gap-1.5 w-full sm:w-auto" onClick={() => setSettingsOpen(true)}>
               <Settings2 className="w-4 h-4" /> Format
             </Button>
-            <Button className="gap-2 cursor-pointer" onClick={() => setCreateOpen(true)}>
+            <Button className="gap-2 cursor-pointer w-full sm:w-auto" onClick={() => setCreateOpen(true)}>
               <Plus className="w-4 h-4" /> Create Invoice
             </Button>
           </div>
@@ -950,7 +952,7 @@ export function Invoices() {
 
         <Card>
           <CardHeader className="py-4">
-            <div className="w-[200px]">
+            <div className="w-full sm:w-[200px]">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger><SelectValue placeholder="All Statuses" /></SelectTrigger>
                 <SelectContent>
@@ -962,8 +964,8 @@ export function Invoices() {
               </Select>
             </div>
           </CardHeader>
-          <CardContent className="p-0">
-            <Table>
+          <CardContent className="p-0 overflow-x-auto">
+            <Table className="min-w-[980px] sm:min-w-full">
               <TableHeader>
                 <TableRow>
                   <TableHead>Invoice #</TableHead>

@@ -191,14 +191,14 @@ export function Patients() {
             <h1 className="text-3xl font-bold tracking-tight">Patients</h1>
             <p className="text-muted-foreground mt-2">Manage patient records and history</p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button className="gap-2 px-3" variant="outline" onClick={() => toggleSelectAll(selectedIds.length !== patients.length)}>
+          <div className="flex w-full sm:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end">
+            <Button className="gap-2 px-3 w-full sm:w-auto" variant="outline" onClick={() => toggleSelectAll(selectedIds.length !== patients.length)}>
               {selectedIds.length === patients.length && patients.length > 0
                 ? <CheckSquare className="w-4 h-4 text-purple-600" />
                 : <Square className="w-4 h-4 text-slate-500" />}
               {selectedIds.length === patients.length && patients.length > 0 ? "Deselect all" : `Select all patients (${patients.length})`}
             </Button>
-            <Button className="gap-2 cursor-pointer" onClick={() => setAddOpen(true)}>
+            <Button className="gap-2 cursor-pointer w-full sm:w-auto" onClick={() => setAddOpen(true)}>
               <Plus className="w-4 h-4" /> Add Patient
             </Button>
           </div>
