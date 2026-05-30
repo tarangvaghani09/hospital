@@ -1,5 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import {
   LayoutDashboard,
   Building2,
@@ -22,11 +24,25 @@ interface NavItem {
   icon: React.ElementType;
 }
 
-export function Sidebar() {
-  const { user } = useAuth();
+export function Sidebar({
+  mobileOpen = false,
+  onMobileOpenChange,
+}: {
+  mobileOpen?: boolean;
+  onMobileOpenChange?: (open: boolean) => void;
+}) {
+  const { user, logout } = useAuth();
   const [location] = useLocation();
 
   if (!user) return null;
+
+  const roleLabels: Record<string, string> = {
+    SUPER_ADMIN: "Super Admin",
+    HOSPITAL_ADMIN: "Hospital Admin",
+    DOCTOR: "Doctor",
+    RECEPTIONIST: "Receptionist",
+    PATIENT: "Patient",
+  };
 
   let navItems: NavItem[] = [];
 
@@ -89,27 +105,76 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="w-64 border-r bg-card hidden md:flex flex-col">
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-        {navItems.map((item) => {
-          const isActive = location === item.href || location.startsWith(`${item.href}/`);
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors ${
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              }`}
-            >
-              <Icon className="w-5 h-5" />
-              {item.title}
-            </Link>
-          );
-        })}
-      </nav>
-    </aside>
+    <>
+      <Sheet open={mobileOpen} onOpenChange={onMobileOpenChange}>
+        <SheetContent side="right" className="w-[82vw] max-w-[320px] p-0 md:hidden">
+          <div className="h-full px-4 pb-4 pt-12 space-y-4 overflow-y-auto">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="w-full rounded-xl border border-border px-3 py-2 text-left">
+                  <p className="text-sm font-medium leading-none truncate">{user.name}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{roleLabels[user.role]}</p>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[240px] max-w-[70vw]">
+                <DropdownMenuItem
+                  className="cursor-pointer text-destructive focus:text-destructive"
+                  onClick={() => {
+                    onMobileOpenChange?.(false);
+                    logout();
+                  }}
+                >
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <nav className="space-y-1">
+            {navItems.map((item) => {
+              const isActive = location === item.href || location.startsWith(`${item.href}/`);
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => onMobileOpenChange?.(false)}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors ${
+                    isActive
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  {item.title}
+                </Link>
+              );
+            })}
+            </nav>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <aside className="w-64 border-r bg-card hidden md:flex flex-col">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+          {navItems.map((item) => {
+            const isActive = location === item.href || location.startsWith(`${item.href}/`);
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors ${
+                  isActive
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                {item.title}
+              </Link>
+            );
+          })}
+        </nav>
+      </aside>
+    </>
   );
 }

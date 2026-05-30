@@ -26,7 +26,7 @@ export function HospitalDashboard() {
 
         {isLoading ? (
           <div className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               {[1, 2, 3, 4].map((i) => (
                 <Card key={i}>
                   <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -39,17 +39,17 @@ export function HospitalDashboard() {
                 </Card>
               ))}
             </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-              <Card className="col-span-4">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-7">
+              <Card className="lg:col-span-4">
                 <CardHeader><Skeleton className="h-6 w-40" /></CardHeader>
                 <CardContent><Skeleton className="h-[300px] w-full" /></CardContent>
               </Card>
-              <Card className="col-span-3">
+              <Card className="lg:col-span-3">
                 <CardHeader><Skeleton className="h-6 w-52" /></CardHeader>
                 <CardContent><Skeleton className="h-[300px] w-full" /></CardContent>
               </Card>
             </div>
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <Card>
                 <CardHeader><Skeleton className="h-6 w-44" /></CardHeader>
                 <CardContent className="space-y-3">
@@ -66,7 +66,7 @@ export function HospitalDashboard() {
           </div>
         ) : data ? (
           <>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-medium">Total Doctors</CardTitle>
@@ -109,8 +109,8 @@ export function HospitalDashboard() {
               </Card>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-              <Card className="col-span-4">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-7">
+              <Card className="lg:col-span-4">
                 <CardHeader>
                   <CardTitle>Revenue Overview</CardTitle>
                 </CardHeader>
@@ -131,7 +131,7 @@ export function HospitalDashboard() {
                 </CardContent>
               </Card>
 
-              <Card className="col-span-3">
+              <Card className="lg:col-span-3">
                 <CardHeader>
                   <CardTitle>Appointments by Status</CardTitle>
                 </CardHeader>
@@ -163,7 +163,7 @@ export function HospitalDashboard() {
               </Card>
             </div>
             
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                <Card>
                 <CardHeader>
                   <CardTitle>Top Performing Doctors</CardTitle>
