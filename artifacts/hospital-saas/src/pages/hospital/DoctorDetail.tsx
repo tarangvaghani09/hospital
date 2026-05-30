@@ -1,17 +1,34 @@
-import { useGetDoctor, getGetDoctorQueryKey, useGetDoctorSchedule, getGetDoctorScheduleQueryKey } from "@workspace/api-client-react";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useGetDoctor, getGetDoctorQueryKey, useGetDoctorSchedule, getGetDoctorScheduleQueryKey, useUpdateDoctorSchedule } from "@workspace/api-client-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
 import { useParams } from "wouter";
-import { Mail, Phone, Clock, Stethoscope, Briefcase } from "lucide-react";
+import { Mail, Phone, Stethoscope, Briefcase } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useCurrency } from "@/lib/currency";
+
+type EditableDaySchedule = {
+  dayOfWeek: number;
+  isAvailable: boolean;
+  startTime: string;
+  endTime: string;
+  slotDuration: string;
+};
 
 export function DoctorDetail() {
   const params = useParams();
   const doctorId = params.id ? parseInt(params.id) : 0;
   const currency = useCurrency();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const { data: doctor, isLoading: isDoctorLoading } = useGetDoctor(
     doctorId,
@@ -22,8 +39,90 @@ export function DoctorDetail() {
     doctorId,
     { query: { enabled: !!doctorId, queryKey: getGetDoctorScheduleQueryKey(doctorId) } }
   );
+  const updateSchedule = useUpdateDoctorSchedule();
 
   const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const defaultSchedule: EditableDaySchedule[] = daysOfWeek.map((_, dayOfWeek) => ({
+    dayOfWeek,
+    isAvailable: false,
+    startTime: "09:00",
+    endTime: "17:00",
+    slotDuration: "30",
+  }));
+  const [editableSchedule, setEditableSchedule] = useState<EditableDaySchedule[]>(defaultSchedule);
+
+  useEffect(() => {
+    if (!schedule) {
+      setEditableSchedule(defaultSchedule);
+      return;
+    }
+    const byDay = new Map(schedule.map((s) => [s.dayOfWeek, s]));
+    setEditableSchedule(
+      daysOfWeek.map((_, dayOfWeek) => {
+        const existing = byDay.get(dayOfWeek);
+        return {
+          dayOfWeek,
+          isAvailable: existing?.isAvailable ?? false,
+          startTime: existing?.startTime ?? "09:00",
+          endTime: existing?.endTime ?? "17:00",
+          slotDuration: String(existing?.slotDuration ?? 30),
+        };
+      })
+    );
+  }, [schedule]);
+
+  function updateDay(dayOfWeek: number, patch: Partial<EditableDaySchedule>) {
+    setEditableSchedule((prev) => prev.map((d) => (d.dayOfWeek === dayOfWeek ? { ...d, ...patch } : d)));
+  }
+
+  function validateSchedule() {
+    for (const row of editableSchedule) {
+      if (!row.isAvailable) continue;
+      if (!row.startTime || !row.endTime) {
+        return "Start and end time are required for available days";
+      }
+      if (row.endTime <= row.startTime) {
+        return `End time must be after start time for ${daysOfWeek[row.dayOfWeek]}`;
+      }
+      const duration = Number(row.slotDuration);
+      if (!Number.isFinite(duration) || duration < 5 || duration > 240) {
+        return `Slot duration must be between 5 and 240 minutes for ${daysOfWeek[row.dayOfWeek]}`;
+      }
+    }
+    return null;
+  }
+
+  function handleSaveSchedule() {
+    const error = validateSchedule();
+    if (error) {
+      toast({ variant: "destructive", title: "Invalid schedule", description: error });
+      return;
+    }
+
+    const payload = editableSchedule.map((d) => ({
+      dayOfWeek: d.dayOfWeek,
+      isAvailable: d.isAvailable,
+      startTime: d.startTime,
+      endTime: d.endTime,
+      slotDuration: Number(d.slotDuration) || 30,
+      breakStart: null,
+      breakEnd: null,
+      maxPatients: null,
+    }));
+
+    updateSchedule.mutate(
+      { id: doctorId, data: { schedules: payload } },
+      {
+        onSuccess: async () => {
+          toast({ title: "Schedule updated" });
+          await queryClient.invalidateQueries({ queryKey: getGetDoctorScheduleQueryKey(doctorId) });
+        },
+        onError: (e: any) => {
+          toast({ variant: "destructive", title: "Failed to update schedule", description: e?.message ?? "Please try again" });
+        },
+      }
+    );
+  }
 
   if (isDoctorLoading) {
     return (
@@ -142,29 +241,49 @@ export function DoctorDetail() {
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        {schedule && schedule.length > 0 ? (
-                          schedule.map((slot, index) => (
-                            <div key={index} className={`flex items-center justify-between p-4 border rounded-lg ${!slot.isAvailable ? 'bg-muted/50 opacity-70' : ''}`}>
-                              <div className="font-medium w-24">{daysOfWeek[slot.dayOfWeek]}</div>
-                              {slot.isAvailable ? (
-                                <>
-                                  <div className="flex items-center gap-2 text-sm">
-                                    <Clock className="w-4 h-4 text-primary" />
-                                    <span>{slot.startTime} - {slot.endTime}</span>
-                                  </div>
-                                  <div className="text-sm text-muted-foreground">
-                                    {slot.slotDuration} min slots
-                                  </div>
-                                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Available</Badge>
-                                </>
-                              ) : (
-                                <Badge variant="secondary">Unavailable</Badge>
-                              )}
+                        {editableSchedule.map((row) => (
+                          <div key={row.dayOfWeek} className={`p-4 border rounded-lg ${!row.isAvailable ? "bg-muted/40" : ""}`}>
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="font-medium">{daysOfWeek[row.dayOfWeek]}</div>
+                              <div className="flex items-center gap-3">
+                                <Badge variant={row.isAvailable ? "outline" : "secondary"} className={row.isAvailable ? "bg-blue-50 text-blue-700 border-blue-200" : ""}>
+                                  {row.isAvailable ? "Available" : "Unavailable"}
+                                </Badge>
+                                <div className="flex items-center gap-2">
+                                  <Label className="text-sm text-muted-foreground">Available</Label>
+                                  <Switch checked={row.isAvailable} onCheckedChange={(checked) => updateDay(row.dayOfWeek, { isAvailable: checked })} />
+                                </div>
+                              </div>
                             </div>
-                          ))
-                        ) : (
-                          <div className="text-center py-6 text-muted-foreground">No schedule configured</div>
-                        )}
+                            <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                              <div className="space-y-1">
+                                <Label className="text-xs text-muted-foreground">Start Time</Label>
+                                <Input type="time" value={row.startTime} disabled={!row.isAvailable} onChange={(e) => updateDay(row.dayOfWeek, { startTime: e.target.value })} />
+                              </div>
+                              <div className="space-y-1">
+                                <Label className="text-xs text-muted-foreground">End Time</Label>
+                                <Input type="time" value={row.endTime} disabled={!row.isAvailable} onChange={(e) => updateDay(row.dayOfWeek, { endTime: e.target.value })} />
+                              </div>
+                              <div className="space-y-1">
+                                <Label className="text-xs text-muted-foreground">Slot Duration (min)</Label>
+                                <Input
+                                  type="number"
+                                  min={5}
+                                  max={240}
+                                  step={5}
+                                  value={row.slotDuration}
+                                  disabled={!row.isAvailable}
+                                  onChange={(e) => updateDay(row.dayOfWeek, { slotDuration: e.target.value })}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                        <div className="flex justify-end pt-2">
+                          <Button onClick={handleSaveSchedule} disabled={updateSchedule.isPending}>
+                            {updateSchedule.isPending ? "Saving..." : "Save / Update Schedule"}
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </CardContent>

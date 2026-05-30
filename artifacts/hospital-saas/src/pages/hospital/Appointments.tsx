@@ -190,7 +190,7 @@ function BookAppointmentDialog({ open, onClose, onSuccess, editAppointment, defa
               {slotsEnabled ? (
                 <Select value={time} onValueChange={setTime}>
                   <SelectTrigger><SelectValue placeholder="Select slot" /></SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-64 overflow-y-auto">
                     {showCurrentTimeOption && (
                       <SelectItem value={time}>{time} (Current)</SelectItem>
                     )}
