@@ -61,7 +61,17 @@ function AddDoctorDialog({ open, onClose, onSuccess }: { open: boolean; onClose:
         departmentId: clean.departmentId ? parseInt(clean.departmentId) : undefined,
       }
     }, {
-      onSuccess: () => { toast({ title: "Doctor account created" }); onSuccess(); onClose(); },
+      onSuccess: () => {
+        toast({ title: "Doctor account created" });
+        setForm({
+          name: "", email: "", password: "", phone: "",
+          specialization: "", qualification: "", experience: "",
+          consultationFee: "", departmentId: "",
+        });
+        setShowPwd(false);
+        onSuccess();
+        onClose();
+      },
       onError: (e: any) => toast({ variant: "destructive", title: "Error", description: e.message }),
     });
   }

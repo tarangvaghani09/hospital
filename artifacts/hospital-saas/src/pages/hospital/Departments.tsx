@@ -67,7 +67,14 @@ function DeptDialog({
       createMutation.mutate(
         { data: { name: clean.name, description: clean.description || undefined } },
         {
-          onSuccess: () => { toast({ title: "Department created" }); onSuccess(); onClose(); },
+          onSuccess: () => {
+            toast({ title: "Department created" });
+            setName("");
+            setDescription("");
+            setIsActive(true);
+            onSuccess();
+            onClose();
+          },
           onError: (e: any) => toast({ variant: "destructive", title: "Error", description: e.message }),
         }
       );

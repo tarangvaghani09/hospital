@@ -50,7 +50,16 @@ function AddReceptionistDialog({ open, onClose, onSuccess }: { open: boolean; on
     mutation.mutate({
       data: { name: cleanName, email: cleanEmail, password: cleanPassword, phone: cleanPhone || undefined }
     }, {
-      onSuccess: () => { toast({ title: "Receptionist account created" }); onSuccess(); onClose(); },
+      onSuccess: () => {
+        toast({ title: "Receptionist account created" });
+        setName("");
+        setEmail("");
+        setPassword("");
+        setPhone("");
+        setShowPwd(false);
+        onSuccess();
+        onClose();
+      },
       onError: (e: any) => toast({ variant: "destructive", title: "Error", description: e.message }),
     });
   }

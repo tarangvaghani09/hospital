@@ -88,7 +88,19 @@ function NewPrescriptionDialog({ open, onClose, onSuccess }: { open: boolean; on
         followUpDate: followUpDate || undefined,
       }
     }, {
-      onSuccess: () => { toast({ title: "Prescription created" }); onSuccess(); onClose(); },
+      onSuccess: () => {
+        toast({ title: "Prescription created" });
+        setPatientId("");
+        setDoctorId("");
+        setPatientSearch("");
+        setSymptoms("");
+        setDiagnosis("");
+        setAdvice("");
+        setFollowUpDate("");
+        setMedicines([emptyMed()]);
+        onSuccess();
+        onClose();
+      },
       onError: (e: any) => toast({ variant: "destructive", title: "Error", description: e.message }),
     });
   }

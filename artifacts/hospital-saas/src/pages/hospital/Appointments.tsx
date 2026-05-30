@@ -143,7 +143,19 @@ function BookAppointmentDialog({ open, onClose, onSuccess, editAppointment, defa
       createMutation.mutate(
         { data: { patientId: parseInt(patientId), doctorId: parseInt(doctorId), appointmentDate: date, appointmentTime: time, appointmentType, symptoms: symptoms || undefined, notes: notes || undefined } },
         {
-          onSuccess: () => { toast({ title: "Appointment booked" }); onSuccess(); onClose(); },
+          onSuccess: () => {
+            toast({ title: "Appointment booked" });
+            setPatientId("");
+            setDoctorId(defaultDoctorId || "");
+            setDate(todayStr());
+            setTime("");
+            setAppointmentType("WALK_IN");
+            setSymptoms("");
+            setNotes("");
+            setPatientSearch("");
+            onSuccess();
+            onClose();
+          },
           onError: (e: any) => toast({ variant: "destructive", title: "Error", description: e.message }),
         }
       );

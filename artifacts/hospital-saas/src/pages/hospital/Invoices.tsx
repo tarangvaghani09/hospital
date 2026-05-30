@@ -310,7 +310,20 @@ export function CreateInvoiceDialog({
         paymentMethod: paymentMethod || undefined, notes: notes || undefined,
       }
     }, {
-      onSuccess: () => { toast({ title: "Invoice created" }); onSuccess(); onClose(); },
+      onSuccess: () => {
+        toast({ title: "Invoice created" });
+        setPatientId("");
+        setDoctorId("");
+        setPatientSearch("");
+        setItems([{ description: "", category: "CONSULTATION", quantity: 1, unitPrice: 0, amount: 0 }]);
+        setDiscountAmount(0);
+        setTaxPercentage(0);
+        setPaidAmount(0);
+        setPaymentMethod("");
+        setNotes("");
+        onSuccess();
+        onClose();
+      },
       onError: (e: any) => toast({ variant: "destructive", title: "Error", description: e.message }),
     });
   }
