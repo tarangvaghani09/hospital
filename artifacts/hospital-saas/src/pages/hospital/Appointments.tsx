@@ -25,6 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { bookAppointmentSchema } from "@/lib/validations/appointment";
 
 const statusColors: Record<string, string> = {
   COMPLETED: "bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400",
@@ -117,8 +118,17 @@ function BookAppointmentDialog({ open, onClose, onSuccess, editAppointment, defa
   const showCurrentTimeOption = isEdit && time && !filteredSlots.find((s: any) => s.time === time && s.available);
 
   function handleSubmit() {
-    if (!patientId || !doctorId || !date || !time) {
-      toast({ variant: "destructive", title: "Missing fields", description: "Please fill all required fields." });
+    const parsed = bookAppointmentSchema.safeParse({
+      patientId,
+      doctorId,
+      date,
+      time,
+      appointmentType,
+      symptoms,
+      notes,
+    });
+    if (!parsed.success) {
+      toast({ variant: "destructive", title: parsed.error.issues[0]?.message ?? "Invalid input" });
       return;
     }
     if (isEdit) {
@@ -155,7 +165,7 @@ function BookAppointmentDialog({ open, onClose, onSuccess, editAppointment, defa
               <Input placeholder="Search patient..." value={patientSearch} onChange={(e) => setPatientSearch(e.target.value)} className="mb-1" />
               <Select value={patientId} onValueChange={setPatientId}>
                 <SelectTrigger><SelectValue placeholder="Select patient" /></SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-64 overflow-y-auto">
                   {patientsData?.patients?.map((p: any) => (
                     <SelectItem key={p.id} value={String(p.id)}>{p.name} {p.phone ? `— ${p.phone}` : ""}</SelectItem>
                   ))}
@@ -173,7 +183,7 @@ function BookAppointmentDialog({ open, onClose, onSuccess, editAppointment, defa
             <Label>Doctor <span className="text-red-500">*</span></Label>
             <Select value={doctorId} onValueChange={(v) => { setDoctorId(v); if (!isEdit) setTime(""); }}>
               <SelectTrigger><SelectValue placeholder="Select doctor" /></SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-64 overflow-y-auto">
                 {doctorsData?.map((d: any) => (
                   <SelectItem key={d.id} value={String(d.id)}>Dr. {d.name} {d.specialization ? `— ${d.specialization}` : ""}</SelectItem>
                 ))}
@@ -218,7 +228,7 @@ function BookAppointmentDialog({ open, onClose, onSuccess, editAppointment, defa
             <Label>Type</Label>
             <Select value={appointmentType} onValueChange={setAppointmentType}>
               <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-64 overflow-y-auto">
                 <SelectItem value="WALK_IN">Walk-in</SelectItem>
                 <SelectItem value="SCHEDULED">Scheduled</SelectItem>
                 <SelectItem value="EMERGENCY">Emergency</SelectItem>
@@ -796,3 +806,4 @@ export function Appointments() {
     </DashboardLayout>
   );
 }
+
