@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Plus, Mail, Phone, CheckSquare, Square, X, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function AddDoctorDialog({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: () => void }) {
   const { toast } = useToast();
@@ -130,6 +131,7 @@ function AddDoctorDialog({ open, onClose, onSuccess }: { open: boolean; onClose:
 }
 
 export function Doctors() {
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
@@ -226,7 +228,16 @@ export function Doctors() {
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Loading doctors...</TableCell></TableRow>
+                  [...Array(10)].map((_, i) => (
+                    <TableRow key={`doctor-skeleton-${i}`}>
+                      <TableCell><Skeleton className="h-5 w-5" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-48" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-28" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-56" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+                      <TableCell className="text-right"><Skeleton className="h-6 w-16 ml-auto" /></TableCell>
+                    </TableRow>
+                  ))
                 ) : doctors.length === 0 ? (
                   <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No doctors found</TableCell></TableRow>
                 ) : doctors.map((doctor) => (

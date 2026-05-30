@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const statusColors: Record<string, string> = {
   COMPLETED: "bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400",
@@ -616,9 +617,18 @@ export function Appointments() {
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">Loading appointments...</TableCell>
-                  </TableRow>
+                  [...Array(10)].map((_, i) => (
+                    <TableRow key={`appointment-skeleton-${i}`}>
+                      <TableCell><Skeleton className="h-5 w-5" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-40" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-40" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-32" /></TableCell>
+                      <TableCell><Skeleton className="h-8 w-8 rounded-full" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-24" /></TableCell>
+                      <TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto rounded-md" /></TableCell>
+                    </TableRow>
+                  ))
                 ) : appointments.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center py-12 text-muted-foreground">

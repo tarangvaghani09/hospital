@@ -25,18 +25,44 @@ export function HospitalDashboard() {
         </div>
 
         {isLoading ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {[1, 2, 3, 4].map((i) => (
-              <Card key={i}>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <Skeleton className="h-4 w-1/2" />
-                  <Skeleton className="h-4 w-4" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-8 w-1/3 mb-1" />
+          <div className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {[1, 2, 3, 4].map((i) => (
+                <Card key={i}>
+                  <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-4" />
+                  </CardHeader>
+                  <CardContent>
+                    <Skeleton className="h-8 w-1/3 mb-1" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+              <Card className="col-span-4">
+                <CardHeader><Skeleton className="h-6 w-40" /></CardHeader>
+                <CardContent><Skeleton className="h-[300px] w-full" /></CardContent>
+              </Card>
+              <Card className="col-span-3">
+                <CardHeader><Skeleton className="h-6 w-52" /></CardHeader>
+                <CardContent><Skeleton className="h-[300px] w-full" /></CardContent>
+              </Card>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader><Skeleton className="h-6 w-44" /></CardHeader>
+                <CardContent className="space-y-3">
+                  {[...Array(5)].map((_, i) => <Skeleton key={`dsk-doctor-${i}`} className="h-10 w-full" />)}
                 </CardContent>
               </Card>
-            ))}
+              <Card>
+                <CardHeader><Skeleton className="h-6 w-44" /></CardHeader>
+                <CardContent className="space-y-3">
+                  {[...Array(5)].map((_, i) => <Skeleton key={`dsk-apt-${i}`} className="h-10 w-full" />)}
+                </CardContent>
+              </Card>
+            </div>
           </div>
         ) : data ? (
           <>

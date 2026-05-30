@@ -18,6 +18,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Plus, Users, Pencil, CheckSquare, Square, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function DeptDialog({
   open, onClose, onSuccess,
@@ -93,6 +94,7 @@ function DeptDialog({
 }
 
 export function Departments() {
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
@@ -175,7 +177,16 @@ export function Departments() {
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Loading departments...</TableCell></TableRow>
+                  [...Array(10)].map((_, i) => (
+                    <TableRow key={`department-skeleton-${i}`}>
+                      <TableCell><Skeleton className="h-5 w-5" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-44" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-56" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-14" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+                      <TableCell className="text-right"><Skeleton className="h-6 w-16 ml-auto" /></TableCell>
+                    </TableRow>
+                  ))
                 ) : departments.length === 0 ? (
                   <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No departments found</TableCell></TableRow>
                 ) : departments.map((dept) => (

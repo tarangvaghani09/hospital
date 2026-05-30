@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // ─── Invoice Settings (logo + template) stored in localStorage ───────────────
 const SETTINGS_KEY = "medicore_invoice_settings";
@@ -940,7 +941,19 @@ export function Invoices() {
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableRow><TableCell colSpan={9} className="text-center py-8 text-muted-foreground">Loading invoices...</TableCell></TableRow>
+                  [...Array(10)].map((_, i) => (
+                    <TableRow key={`invoice-skeleton-${i}`}>
+                      <TableCell><Skeleton className="h-6 w-28" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-44" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-36" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-16" /></TableCell>
+                      <TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto rounded-md" /></TableCell>
+                    </TableRow>
+                  ))
                 ) : data?.invoices.length === 0 ? (
                   <TableRow><TableCell colSpan={9} className="text-center py-8 text-muted-foreground">No invoices found</TableCell></TableRow>
                 ) : data?.invoices.map((invoice) => (

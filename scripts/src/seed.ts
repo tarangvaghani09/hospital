@@ -250,6 +250,8 @@ async function main() {
   console.log("Hospital 2 Admin: admin@apollocare.com / Admin@123");
   console.log("========================================");
 
+  
+
   process.exit(0);
 }
 

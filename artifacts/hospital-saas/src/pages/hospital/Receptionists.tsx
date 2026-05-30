@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Mail, Phone, CheckSquare, Square, X, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function AddReceptionistDialog({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: () => void }) {
   const { toast } = useToast();
@@ -156,6 +157,7 @@ function EditReceptionistDialog({
 }
 
 export function Receptionists() {
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [addOpen, setAddOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("ALL");
@@ -239,7 +241,16 @@ export function Receptionists() {
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Loading receptionists...</TableCell></TableRow>
+                  [...Array(10)].map((_, i) => (
+                    <TableRow key={`receptionist-skeleton-${i}`}>
+                      <TableCell><Skeleton className="h-5 w-5" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-40" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-56" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+                      <TableCell className="text-right"><Skeleton className="h-6 w-16 ml-auto" /></TableCell>
+                    </TableRow>
+                  ))
                 ) : receptionists.length === 0 ? (
                   <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No receptionists found</TableCell></TableRow>
                 ) : receptionists.map((staff) => (
