@@ -44,12 +44,12 @@ export function PatientDetail() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 pb-8 sm:pb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold tracking-tight">{patient.name}</h1>
-              <Badge variant="outline" className="bg-muted">{patient.patientId}</Badge>
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="max-w-full break-all text-2xl font-bold tracking-tight sm:text-3xl">{patient.name}</h1>
+              <Badge variant="outline" className="bg-muted break-all">{patient.patientId}</Badge>
             </div>
             <p className="text-muted-foreground mt-1">Patient Record & Medical History</p>
           </div>
@@ -69,23 +69,23 @@ export function PatientDetail() {
               
               <div className="space-y-3 pt-4 border-t">
                 {patient.phone && (
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Phone className="w-4 h-4" /> Phone
                     </div>
-                    <span className="font-medium">{patient.phone}</span>
+                    <span className="font-medium break-all">{patient.phone}</span>
                   </div>
                 )}
                 {patient.email && (
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Mail className="w-4 h-4" /> Email
                     </div>
-                    <span className="font-medium">{patient.email}</span>
+                    <span className="font-medium break-all">{patient.email}</span>
                   </div>
                 )}
                 {patient.gender && (
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <User className="w-4 h-4" /> Gender
                     </div>
@@ -93,7 +93,7 @@ export function PatientDetail() {
                   </div>
                 )}
                 {patient.bloodGroup && (
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Droplet className="w-4 h-4" /> Blood Group
                     </div>
@@ -103,7 +103,7 @@ export function PatientDetail() {
                   </div>
                 )}
                 {patient.dateOfBirth && (
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Calendar className="w-4 h-4" /> DOB
                     </div>
@@ -116,10 +116,10 @@ export function PatientDetail() {
 
           <div className="md:col-span-2">
             <Tabs defaultValue="appointments" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="appointments">Appointments ({appointments?.length || 0})</TabsTrigger>
-                <TabsTrigger value="prescriptions">Prescriptions ({prescriptions?.length || 0})</TabsTrigger>
-                <TabsTrigger value="invoices">Invoices ({invoices?.length || 0})</TabsTrigger>
+              <TabsList className="flex w-full overflow-x-auto sm:grid sm:grid-cols-3">
+                <TabsTrigger value="appointments" className="shrink-0 whitespace-nowrap">Appointments ({appointments?.length || 0})</TabsTrigger>
+                <TabsTrigger value="prescriptions" className="shrink-0 whitespace-nowrap">Prescriptions ({prescriptions?.length || 0})</TabsTrigger>
+                <TabsTrigger value="invoices" className="shrink-0 whitespace-nowrap">Invoices ({invoices?.length || 0})</TabsTrigger>
               </TabsList>
               
               <TabsContent value="appointments" className="mt-4">

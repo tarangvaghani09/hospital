@@ -234,14 +234,14 @@ export function Receptionists() {
             <h1 className="text-3xl font-bold tracking-tight">Receptionists</h1>
             <p className="text-muted-foreground mt-2">Manage front desk staff and access</p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button className="gap-2 px-3" variant="outline" onClick={() => toggleSelectAll(selectedIds.length !== receptionists.length)}>
+          <div className="flex w-full sm:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end">
+            <Button className="gap-2 px-3 w-full sm:w-auto" variant="outline" onClick={() => toggleSelectAll(selectedIds.length !== receptionists.length)}>
               {selectedIds.length === receptionists.length && receptionists.length > 0
                 ? <CheckSquare className="w-4 h-4 text-purple-600" />
                 : <Square className="w-4 h-4 text-slate-500" />}
               {selectedIds.length === receptionists.length && receptionists.length > 0 ? "Deselect all" : `Select all receptionists (${receptionists.length})`}
             </Button>
-            <Button className="gap-2 cursor-pointer" onClick={() => setAddOpen(true)}>
+            <Button className="gap-2 cursor-pointer w-full sm:w-auto" onClick={() => setAddOpen(true)}>
               <Plus className="w-4 h-4" /> Add Receptionist
             </Button>
           </div>
@@ -251,7 +251,7 @@ export function Receptionists() {
           <CardContent className="p-0">
             <div className="p-4 flex items-center gap-2">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="h-9 w-[140px]"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-9 w-full sm:w-[140px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ALL">All Status</SelectItem>
                   <SelectItem value="ACTIVE">Active</SelectItem>

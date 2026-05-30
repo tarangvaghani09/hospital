@@ -207,15 +207,17 @@ export function Patients() {
         <Card>
           <CardHeader className="py-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-              <Search className="w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by name, ID, or phone..."
-                value={search}
-                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                className="h-9"
-              />
+              <div className="relative w-full sm:w-auto sm:min-w-[320px]">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search by name, ID, or phone..."
+                  value={search}
+                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                  className="h-9 w-full pl-9"
+                />
+              </div>
               <Select value={genderFilter} onValueChange={setGenderFilter}>
-                <SelectTrigger className="h-9 w-[140px]"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-9 w-full sm:w-[140px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ALL">All Gender</SelectItem>
                   <SelectItem value="MALE">Male</SelectItem>
@@ -265,13 +267,13 @@ export function Patients() {
                           : <Square className="w-5 h-5 text-slate-400 hover:text-purple-600" />}
                       </button>
                     </TableCell>
-                    <TableCell className="font-medium text-muted-foreground">{patient.patientId}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
+                    <TableCell className="font-medium text-muted-foreground break-words">{patient.patientId}</TableCell>
+                    <TableCell className="min-w-[220px] sm:min-w-0">
+                      <div className="flex items-center gap-3 min-w-0">
                         <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground font-medium text-xs shrink-0">
                           {patient.name.charAt(0)}
                         </div>
-                        <p className="font-medium">{patient.name}</p>
+                        <p className="font-medium break-words">{patient.name}</p>
                       </div>
                     </TableCell>
                     <TableCell>

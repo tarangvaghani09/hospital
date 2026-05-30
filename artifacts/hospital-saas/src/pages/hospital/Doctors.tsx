@@ -226,17 +226,17 @@ export function Doctors() {
         <Card>
           <CardHeader className="py-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <Search className="w-4 h-4 text-muted-foreground shrink-0" />
-              <Input
-                placeholder="Search doctors..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="h-9"
-              />
+              <div className="relative w-full sm:w-auto sm:min-w-[320px]">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search doctors..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="h-9 w-full pl-9"
+                />
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="h-9 w-[140px]"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-9 w-full sm:w-[140px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ALL">All Status</SelectItem>
                   <SelectItem value="ACTIVE">Active</SelectItem>
