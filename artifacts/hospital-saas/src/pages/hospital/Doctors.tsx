@@ -280,14 +280,14 @@ export function Doctors() {
                           : <Square className="w-5 h-5 text-slate-400 hover:text-purple-600" />}
                       </button>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
+                    <TableCell className="min-w-[220px] sm:min-w-0">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
                           {doctor.name.charAt(0)}
                         </div>
-                        <div>
-                          <p className="font-medium">{doctor.name}</p>
-                          <p className="text-xs text-muted-foreground">{doctor.specialization}</p>
+                        <div className="min-w-0">
+                          <p className="font-medium break-words">{doctor.name}</p>
+                          <p className="text-xs text-muted-foreground break-words">{doctor.specialization}</p>
                         </div>
                       </div>
                     </TableCell>
