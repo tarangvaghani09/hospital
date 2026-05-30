@@ -19,13 +19,16 @@ import { Plus, Users, Pencil, CheckSquare, Square, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { makeDepartmentSchema } from "@/lib/validations/department";
 
 function DeptDialog({
   open, onClose, onSuccess,
   initial,
+  existingNames,
 }: {
   open: boolean; onClose: () => void; onSuccess: () => void;
   initial?: { id: number; name: string; description?: string | null; isActive?: boolean };
+  existingNames: string[];
 }) {
   const { toast } = useToast();
   const isEdit = !!initial;
@@ -37,10 +40,17 @@ function DeptDialog({
   const updateMutation = useUpdateDepartment();
 
   function handleSubmit() {
-    if (!name.trim()) { toast({ variant: "destructive", title: "Name is required" }); return; }
+    const schema = makeDepartmentSchema(existingNames, initial?.name);
+    const parsed = schema.safeParse({ name, description });
+    if (!parsed.success) {
+      toast({ variant: "destructive", title: parsed.error.issues[0]?.message ?? "Invalid input" });
+      return;
+    }
+    const clean = parsed.data;
+
     if (isEdit) {
       updateMutation.mutate(
-        { id: initial!.id, data: { name, description: description || undefined, isActive } },
+        { id: initial!.id, data: { name: clean.name, description: clean.description || undefined, isActive } },
         {
           onSuccess: () => { toast({ title: "Department updated" }); onSuccess(); onClose(); },
           onError: (e: any) => toast({ variant: "destructive", title: "Error", description: e.message }),
@@ -48,7 +58,7 @@ function DeptDialog({
       );
     } else {
       createMutation.mutate(
-        { data: { name, description: description || undefined } },
+        { data: { name: clean.name, description: clean.description || undefined } },
         {
           onSuccess: () => { toast({ title: "Department created" }); onSuccess(); onClose(); },
           onError: (e: any) => toast({ variant: "destructive", title: "Error", description: e.message }),
@@ -261,6 +271,7 @@ export function Departments() {
         onClose={() => { setDialogOpen(false); setEditing(null); }}
         onSuccess={invalidate}
         initial={editing ?? undefined}
+        existingNames={(data ?? []).map((d: any) => d.name)}
       />
     </DashboardLayout>
   );
