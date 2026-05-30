@@ -23,6 +23,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { createInvoiceSchema } from "@/lib/validations/invoice";
 
 // ─── Invoice Settings (logo + template) stored in localStorage ───────────────
 const SETTINGS_KEY = "medicore_invoice_settings";
@@ -286,8 +287,20 @@ export function CreateInvoiceDialog({
   const dueAmount = Math.max(0, totalAmount - paidAmount);
 
   function handleSubmit() {
-    if (!patientId) { toast({ variant: "destructive", title: "Patient required" }); return; }
-    if (items.some(i => !i.description)) { toast({ variant: "destructive", title: "All items need a description" }); return; }
+    const parsed = createInvoiceSchema.safeParse({
+      patientId,
+      doctorId,
+      items,
+      discountAmount,
+      taxPercentage,
+      paidAmount,
+      paymentMethod,
+      notes,
+    });
+    if (!parsed.success) {
+      toast({ variant: "destructive", title: parsed.error.issues[0]?.message ?? "Invalid input" });
+      return;
+    }
     createMutation.mutate({
       data: {
         patientId: parseInt(patientId),
@@ -313,7 +326,7 @@ export function CreateInvoiceDialog({
               <Input placeholder="Search..." value={patientSearch} onChange={(e) => setPatientSearch(e.target.value)} className="mb-1" />
               <Select value={patientId} onValueChange={setPatientId}>
                 <SelectTrigger><SelectValue placeholder="Select patient" /></SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-64 overflow-y-auto">
                   {patientsData?.patients?.map((p: any) => (
                     <SelectItem key={p.id} value={String(p.id)}>{p.name} {p.phone ? `(${p.phone})` : ""}</SelectItem>
                   ))}
@@ -324,7 +337,7 @@ export function CreateInvoiceDialog({
               <Label>Doctor (optional)</Label>
               <Select value={doctorId} onValueChange={setDoctorId}>
                 <SelectTrigger><SelectValue placeholder="Select doctor" /></SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-64 overflow-y-auto">
                   <SelectItem value="_none">None</SelectItem>
                   {doctorsData?.map((d: any) => (
                     <SelectItem key={d.id} value={String(d.id)}>Dr. {d.name}</SelectItem>
@@ -345,7 +358,7 @@ export function CreateInvoiceDialog({
                   <Input placeholder="Description" value={item.description} onChange={(e) => updateItem(i, "description", e.target.value)} />
                   <Select value={item.category} onValueChange={(v) => updateItem(i, "category", v)}>
                     <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="max-h-64 overflow-y-auto">
                       <SelectItem value="CONSULTATION">Consultation</SelectItem>
                       <SelectItem value="PROCEDURE">Procedure</SelectItem>
                       <SelectItem value="MEDICINE">Medicine</SelectItem>
@@ -355,8 +368,20 @@ export function CreateInvoiceDialog({
                     </SelectContent>
                   </Select>
                   <Input type="number" placeholder="Qty" value={item.quantity} onChange={(e) => updateItem(i, "quantity", parseInt(e.target.value) || 1)} min={1} />
-                  <Input type="number" placeholder="Price" value={item.unitPrice || ""} onChange={(e) => updateItem(i, "unitPrice", parseFloat(e.target.value) || 0)} />
-                  <Input type="number" placeholder="Amount" value={item.amount || ""} onChange={(e) => updateItem(i, "amount", parseFloat(e.target.value) || 0)} />
+                  <Input
+                    type="number"
+                    min={0}
+                    placeholder="Price"
+                    value={item.unitPrice || ""}
+                    onChange={(e) => updateItem(i, "unitPrice", Math.max(0, parseFloat(e.target.value) || 0))}
+                  />
+                  <Input
+                    type="number"
+                    min={0}
+                    placeholder="Amount"
+                    value={item.amount || ""}
+                    onChange={(e) => updateItem(i, "amount", Math.max(0, parseFloat(e.target.value) || 0))}
+                  />
                   <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => removeItem(i)} disabled={items.length === 1}>
                     <X className="w-3 h-3" />
                   </Button>
@@ -391,7 +416,7 @@ export function CreateInvoiceDialog({
               <Label>Payment Method</Label>
               <Select value={paymentMethod} onValueChange={setPaymentMethod}>
                 <SelectTrigger><SelectValue placeholder="Select method" /></SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-64 overflow-y-auto">
                   <SelectItem value="CASH">Cash</SelectItem>
                   <SelectItem value="CARD">Card</SelectItem>
                   <SelectItem value="UPI">UPI</SelectItem>
