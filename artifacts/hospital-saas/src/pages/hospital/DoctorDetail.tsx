@@ -150,11 +150,11 @@ export function DoctorDetail() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 overflow-x-hidden">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold tracking-tight">{doctor.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight break-words">{doctor.name}</h1>
               {doctor.isActive ? (
                 <Badge className="bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400">Active</Badge>
               ) : (
@@ -179,41 +179,41 @@ export function DoctorDetail() {
               
               <div className="space-y-3 pt-4 border-t">
                 {doctor.phone && (
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Phone className="w-4 h-4" /> Phone
                     </div>
-                    <span className="font-medium">{doctor.phone}</span>
+                    <span className="font-medium break-all sm:text-right">{doctor.phone}</span>
                   </div>
                 )}
-                <div className="flex items-center justify-between text-sm">
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between text-sm">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Mail className="w-4 h-4" /> Email
                   </div>
-                  <span className="font-medium">{doctor.email}</span>
+                  <span className="font-medium break-all sm:text-right">{doctor.email}</span>
                 </div>
                 {doctor.experience && (
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Briefcase className="w-4 h-4" /> Experience
                     </div>
-                    <span className="font-medium">{doctor.experience} Years</span>
+                    <span className="font-medium sm:text-right">{doctor.experience} Years</span>
                   </div>
                 )}
                 {doctor.qualification && (
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Stethoscope className="w-4 h-4" /> Qualification
                     </div>
-                    <span className="font-medium">{doctor.qualification}</span>
+                    <span className="font-medium break-words sm:text-right">{doctor.qualification}</span>
                   </div>
                 )}
                 {doctor.consultationFee != null && (
-                  <div className="flex items-center justify-between text-sm pt-2 border-t">
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between text-sm pt-2 border-t">
                     <div className="flex items-center gap-2 font-medium">
                       Consultation Fee
                     </div>
-                    <span className="font-bold">{currency.format(doctor.consultationFee)}</span>
+                    <span className="font-bold sm:text-right">{currency.format(doctor.consultationFee)}</span>
                   </div>
                 )}
               </div>
@@ -243,9 +243,9 @@ export function DoctorDetail() {
                       <div className="space-y-4">
                         {editableSchedule.map((row) => (
                           <div key={row.dayOfWeek} className={`p-4 border rounded-lg ${!row.isAvailable ? "bg-muted/40" : ""}`}>
-                            <div className="flex items-center justify-between gap-3">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                               <div className="font-medium">{daysOfWeek[row.dayOfWeek]}</div>
-                              <div className="flex items-center gap-3">
+                              <div className="flex items-center justify-between gap-3 sm:justify-end">
                                 <Badge variant={row.isAvailable ? "outline" : "secondary"} className={row.isAvailable ? "bg-blue-50 text-blue-700 border-blue-200" : ""}>
                                   {row.isAvailable ? "Available" : "Unavailable"}
                                 </Badge>
