@@ -17,6 +17,7 @@ import { Plus, Mail, Phone, CheckSquare, Square, X, Pencil } from "lucide-react"
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { addReceptionistSchema } from "@/lib/validations/receptionist";
 
 function AddReceptionistDialog({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: () => void }) {
   const { toast } = useToast();
@@ -29,14 +30,19 @@ function AddReceptionistDialog({ open, onClose, onSuccess }: { open: boolean; on
   const mutation = useCreateReceptionist();
 
   function handleSubmit() {
-    if (!name.trim() || !email.trim() || !password.trim()) {
-      toast({ variant: "destructive", title: "Name, email and password are required" }); return;
+    const parsed = addReceptionistSchema.safeParse({
+      name,
+      email,
+      password,
+      phone,
+    });
+    if (!parsed.success) {
+      toast({ variant: "destructive", title: parsed.error.issues[0]?.message ?? "Invalid input" });
+      return;
     }
-    if (password.length < 6) {
-      toast({ variant: "destructive", title: "Password must be at least 6 characters" }); return;
-    }
+    const { name: cleanName, email: cleanEmail, password: cleanPassword, phone: cleanPhone } = parsed.data;
     mutation.mutate({
-      data: { name, email, password, phone: phone || undefined }
+      data: { name: cleanName, email: cleanEmail, password: cleanPassword, phone: cleanPhone || undefined }
     }, {
       onSuccess: () => { toast({ title: "Receptionist account created" }); onSuccess(); onClose(); },
       onError: (e: any) => toast({ variant: "destructive", title: "Error", description: e.message }),
@@ -74,7 +80,13 @@ function AddReceptionistDialog({ open, onClose, onSuccess }: { open: boolean; on
           </div>
           <div className="space-y-1">
             <Label>Phone</Label>
-            <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 XXXXX XXXXX" />
+            <Input
+              value={phone}
+              onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+              placeholder="10 digit phone"
+              maxLength={10}
+              inputMode="numeric"
+            />
           </div>
         </div>
         <DialogFooter>
