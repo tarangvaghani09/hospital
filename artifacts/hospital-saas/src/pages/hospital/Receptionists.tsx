@@ -19,6 +19,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { addReceptionistSchema } from "@/lib/validations/receptionist";
 
+function formatPhoneForUi(phone?: string | null) {
+  if (!phone) return "";
+  const digits = String(phone).replace(/\D/g, "");
+  return digits ? `+91-${digits}` : "";
+}
+
 function AddReceptionistDialog({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: () => void }) {
   const { toast } = useToast();
   const [name, setName] = useState("");
@@ -80,13 +86,17 @@ function AddReceptionistDialog({ open, onClose, onSuccess }: { open: boolean; on
           </div>
           <div className="space-y-1">
             <Label>Phone</Label>
-            <Input
-              value={phone}
-              onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
-              placeholder="10 digit phone"
-              maxLength={10}
-              inputMode="numeric"
-            />
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">+91-</span>
+              <Input
+                value={phone}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                placeholder="10 digit phone"
+                maxLength={10}
+                inputMode="numeric"
+                className="pl-12"
+              />
+            </div>
           </div>
         </div>
         <DialogFooter>
@@ -289,7 +299,7 @@ export function Receptionists() {
                         </div>
                         {staff.phone && (
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Phone className="w-3 h-3" /> {staff.phone}
+                            <Phone className="w-3 h-3" /> {formatPhoneForUi(staff.phone)}
                           </div>
                         )}
                       </div>

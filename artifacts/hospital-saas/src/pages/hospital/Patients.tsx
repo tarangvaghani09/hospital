@@ -20,6 +20,12 @@ import { addPatientSchema } from "@/lib/validations/patient";
 
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
+function formatPhoneForUi(phone?: string | null) {
+  if (!phone) return "";
+  const digits = String(phone).replace(/\D/g, "");
+  return digits ? `+91-${digits}` : "";
+}
+
 function AddPatientDialog({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: () => void }) {
   const { toast } = useToast();
   const [form, setForm] = useState({
@@ -69,13 +75,17 @@ function AddPatientDialog({ open, onClose, onSuccess }: { open: boolean; onClose
             </div>
             <div className="space-y-1">
               <Label>Phone <span className="text-red-500">*</span></Label>
-              <Input
-                value={form.phone}
-                onChange={(e) => set("phone", e.target.value.replace(/\D/g, "").slice(0, 10))}
-                placeholder="10 digit phone"
-                maxLength={10}
-                inputMode="numeric"
-              />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">+91-</span>
+                <Input
+                  value={form.phone}
+                  onChange={(e) => set("phone", e.target.value.replace(/\D/g, "").slice(0, 10))}
+                  placeholder="10 digit phone"
+                  maxLength={10}
+                  inputMode="numeric"
+                  className="pl-12"
+                />
+              </div>
             </div>
             <div className="space-y-1">
               <Label>Email</Label>
@@ -113,13 +123,17 @@ function AddPatientDialog({ open, onClose, onSuccess }: { open: boolean; onClose
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
               <Label>Emergency Contact</Label>
-              <Input
-                value={form.emergencyContact}
-                onChange={(e) => set("emergencyContact", e.target.value.replace(/\D/g, "").slice(0, 10))}
-                placeholder="10 digit emergency number"
-                maxLength={10}
-                inputMode="numeric"
-              />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">+91-</span>
+                <Input
+                  value={form.emergencyContact}
+                  onChange={(e) => set("emergencyContact", e.target.value.replace(/\D/g, "").slice(0, 10))}
+                  placeholder="10 digit emergency number"
+                  maxLength={10}
+                  inputMode="numeric"
+                  className="pl-12"
+                />
+              </div>
             </div>
             <div className="space-y-1">
               <Label>Known Allergies</Label>
@@ -264,7 +278,7 @@ export function Patients() {
                       <div className="space-y-1">
                         {patient.phone && (
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Phone className="w-3 h-3" /> {patient.phone}
+                            <Phone className="w-3 h-3" /> {formatPhoneForUi(patient.phone)}
                           </div>
                         )}
                         {patient.email && (

@@ -21,6 +21,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { addDoctorSchema } from "@/lib/validations/doctor";
 
+function formatPhoneForUi(phone?: string | null) {
+  if (!phone) return "";
+  const digits = String(phone).replace(/\D/g, "");
+  return digits ? `+91-${digits}` : "";
+}
+
 function AddDoctorDialog({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: () => void }) {
   const { toast } = useToast();
   const [form, setForm] = useState({
@@ -90,13 +96,17 @@ function AddDoctorDialog({ open, onClose, onSuccess }: { open: boolean; onClose:
             </div>
             <div className="space-y-1">
               <Label>Phone</Label>
-              <Input
-                value={form.phone}
-                onChange={(e) => set("phone", e.target.value.replace(/\D/g, "").slice(0, 10))}
-                placeholder="10 digit phone"
-                maxLength={10}
-                inputMode="numeric"
-              />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">+91-</span>
+                <Input
+                  value={form.phone}
+                  onChange={(e) => set("phone", e.target.value.replace(/\D/g, "").slice(0, 10))}
+                  placeholder="10 digit phone"
+                  maxLength={10}
+                  inputMode="numeric"
+                  className="pl-12"
+                />
+              </div>
             </div>
             <div className="space-y-1">
               <Label>Department</Label>
@@ -279,7 +289,7 @@ export function Doctors() {
                         </div>
                         {doctor.phone && (
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Phone className="w-3 h-3" /> {doctor.phone}
+                            <Phone className="w-3 h-3" /> {formatPhoneForUi(doctor.phone)}
                           </div>
                         )}
                       </div>
