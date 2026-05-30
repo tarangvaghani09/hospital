@@ -11,15 +11,29 @@ import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useRef } from "react";
 
+const normalize = (v: string) => v.trim().replace(/\s+/g, " ");
+const optionalText = z.string().optional().or(z.literal("")).transform((v) => normalize(v ?? ""));
+
 const profileSchema = z.object({
-  name: z.string().min(2, "Name is required"),
-  email: z.string().email().optional().or(z.literal("")),
-  phone: z.string().optional().or(z.literal("")),
-  emergencyPhone: z.string().optional().or(z.literal("")),
-  address: z.string().optional().or(z.literal("")),
-  registrationNumber: z.string().optional().or(z.literal("")),
-  gstNumber: z.string().optional().or(z.literal("")),
-  websiteUrl: z.string().url().optional().or(z.literal("")),
+  name: z.string()
+    .transform(normalize)
+    .refine((v) => v.length >= 2, "Hospital name must be at least 2 characters")
+    .refine((v) => v.length <= 100, "Hospital name must be at most 100 characters")
+    .refine((v) => !/^\d+$/.test(v), "Hospital name cannot be only numbers"),
+  email: optionalText.refine((v) => v === "" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), "Please enter a valid email address"),
+  phone: optionalText
+    .refine((v) => v === "" || /^\d+$/.test(v), "Primary phone must contain digits only")
+    .refine((v) => v === "" || v.length <= 10, "Primary phone cannot be more than 10 digits"),
+  emergencyPhone: optionalText
+    .refine((v) => v === "" || /^\d+$/.test(v), "Emergency contact must contain digits only")
+    .refine((v) => v === "" || v.length <= 10, "Emergency contact cannot be more than 10 digits"),
+  address: optionalText.refine((v) => v === "" || !/^\d+$/.test(v), "Address cannot be only numbers"),
+  registrationNumber: optionalText,
+  gstNumber: optionalText,
+  websiteUrl: optionalText.refine(
+    (v) => v === "" || /^https?:\/\/[^\s]+\.[^\s]+$/i.test(v),
+    "Please enter a valid website URL (http:// or https://)"
+  ),
 });
 
 export function HospitalProfile() {
@@ -160,7 +174,18 @@ export function HospitalProfile() {
                       <FormItem>
                         <FormLabel>Primary Phone</FormLabel>
                         <FormControl>
-                          <Input {...field} />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">+91-</span>
+                            <Input
+                              {...field}
+                              value={field.value || ""}
+                              onChange={(e) => field.onChange(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                              inputMode="numeric"
+                              maxLength={10}
+                              className="pl-12"
+                              placeholder="XXXXXXXXXX"
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -176,7 +201,18 @@ export function HospitalProfile() {
                       <FormItem>
                         <FormLabel>Emergency Contact</FormLabel>
                         <FormControl>
-                          <Input {...field} />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">+91-</span>
+                            <Input
+                              {...field}
+                              value={field.value || ""}
+                              onChange={(e) => field.onChange(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                              inputMode="numeric"
+                              maxLength={10}
+                              className="pl-12"
+                              placeholder="XXXXXXXXXX"
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
