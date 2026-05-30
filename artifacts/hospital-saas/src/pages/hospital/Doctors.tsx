@@ -19,6 +19,7 @@ import { Search, Plus, Mail, Phone, CheckSquare, Square, X, Eye } from "lucide-r
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { addDoctorSchema } from "@/lib/validations/doctor";
 
 function AddDoctorDialog({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: () => void }) {
   const { toast } = useToast();
@@ -35,21 +36,23 @@ function AddDoctorDialog({ open, onClose, onSuccess }: { open: boolean; onClose:
   function set(k: string, v: string) { setForm(p => ({ ...p, [k]: v })); }
 
   function handleSubmit() {
-    if (!form.name.trim() || !form.email.trim() || !form.password.trim()) {
-      toast({ variant: "destructive", title: "Name, email and password are required" }); return;
+    const parsed = addDoctorSchema.safeParse(form);
+    if (!parsed.success) {
+      toast({ variant: "destructive", title: parsed.error.issues[0]?.message ?? "Invalid input" });
+      return;
     }
-    if (form.password.length < 6) {
-      toast({ variant: "destructive", title: "Password must be at least 6 characters" }); return;
-    }
+    const clean = parsed.data;
     mutation.mutate({
       data: {
-        name: form.name, email: form.email, password: form.password,
-        phone: form.phone || undefined,
-        specialization: form.specialization || undefined,
-        qualification: form.qualification || undefined,
-        experience: form.experience ? parseInt(form.experience) : undefined,
-        consultationFee: form.consultationFee ? parseFloat(form.consultationFee) : undefined,
-        departmentId: form.departmentId ? parseInt(form.departmentId) : undefined,
+        name: clean.name,
+        email: clean.email,
+        password: clean.password,
+        phone: clean.phone || undefined,
+        specialization: clean.specialization || undefined,
+        qualification: clean.qualification || undefined,
+        experience: clean.experience ? parseInt(clean.experience) : undefined,
+        consultationFee: clean.consultationFee ? parseFloat(clean.consultationFee) : undefined,
+        departmentId: clean.departmentId ? parseInt(clean.departmentId) : undefined,
       }
     }, {
       onSuccess: () => { toast({ title: "Doctor account created" }); onSuccess(); onClose(); },
@@ -87,13 +90,19 @@ function AddDoctorDialog({ open, onClose, onSuccess }: { open: boolean; onClose:
             </div>
             <div className="space-y-1">
               <Label>Phone</Label>
-              <Input value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="+91 XXXXX XXXXX" />
+              <Input
+                value={form.phone}
+                onChange={(e) => set("phone", e.target.value.replace(/\D/g, "").slice(0, 10))}
+                placeholder="10 digit phone"
+                maxLength={10}
+                inputMode="numeric"
+              />
             </div>
             <div className="space-y-1">
               <Label>Department</Label>
               <Select value={form.departmentId} onValueChange={(v) => set("departmentId", v)}>
                 <SelectTrigger><SelectValue placeholder="Select department" /></SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-64 overflow-y-auto">
                   <SelectItem value="_none">None</SelectItem>
                   {departments?.map((d: any) => (
                     <SelectItem key={d.id} value={String(d.id)}>{d.name}</SelectItem>
