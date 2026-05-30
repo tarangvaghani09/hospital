@@ -16,6 +16,7 @@ import { Search, Plus, Mail, Phone, ChevronLeft, ChevronRight, Users, CheckSquar
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { addPatientSchema } from "@/lib/validations/patient";
 
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
@@ -31,16 +32,19 @@ function AddPatientDialog({ open, onClose, onSuccess }: { open: boolean; onClose
   function set(k: string, v: string) { setForm(p => ({ ...p, [k]: v })); }
 
   function handleSubmit() {
-    if (!form.name.trim() || !form.phone.trim()) {
-      toast({ variant: "destructive", title: "Name and phone are required" }); return;
+    const parsed = addPatientSchema.safeParse(form);
+    if (!parsed.success) {
+      toast({ variant: "destructive", title: parsed.error.issues[0]?.message ?? "Invalid input" });
+      return;
     }
+    const clean = parsed.data;
     mutation.mutate({
       data: {
-        name: form.name, phone: form.phone,
-        email: form.email || undefined, dateOfBirth: form.dateOfBirth || undefined,
-        gender: form.gender || undefined, bloodGroup: form.bloodGroup || undefined,
-        address: form.address || undefined, emergencyContact: form.emergencyContact || undefined,
-        allergies: form.allergies || undefined,
+        name: clean.name, phone: clean.phone,
+        email: clean.email || undefined, dateOfBirth: clean.dateOfBirth || undefined,
+        gender: clean.gender || undefined, bloodGroup: clean.bloodGroup || undefined,
+        address: clean.address || undefined, emergencyContact: clean.emergencyContact || undefined,
+        allergies: clean.allergies || undefined,
       }
     }, {
       onSuccess: () => {
@@ -65,7 +69,13 @@ function AddPatientDialog({ open, onClose, onSuccess }: { open: boolean; onClose
             </div>
             <div className="space-y-1">
               <Label>Phone <span className="text-red-500">*</span></Label>
-              <Input value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="+91 XXXXX XXXXX" />
+              <Input
+                value={form.phone}
+                onChange={(e) => set("phone", e.target.value.replace(/\D/g, "").slice(0, 10))}
+                placeholder="10 digit phone"
+                maxLength={10}
+                inputMode="numeric"
+              />
             </div>
             <div className="space-y-1">
               <Label>Email</Label>
@@ -90,7 +100,7 @@ function AddPatientDialog({ open, onClose, onSuccess }: { open: boolean; onClose
               <Label>Blood Group</Label>
               <Select value={form.bloodGroup} onValueChange={(v) => set("bloodGroup", v)}>
                 <SelectTrigger><SelectValue placeholder="Select blood group" /></SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-64 overflow-y-auto">
                   {BLOOD_GROUPS.map((bg) => <SelectItem key={bg} value={bg}>{bg}</SelectItem>)}
                 </SelectContent>
               </Select>
@@ -103,7 +113,13 @@ function AddPatientDialog({ open, onClose, onSuccess }: { open: boolean; onClose
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
               <Label>Emergency Contact</Label>
-              <Input value={form.emergencyContact} onChange={(e) => set("emergencyContact", e.target.value)} placeholder="Name & phone" />
+              <Input
+                value={form.emergencyContact}
+                onChange={(e) => set("emergencyContact", e.target.value.replace(/\D/g, "").slice(0, 10))}
+                placeholder="10 digit emergency number"
+                maxLength={10}
+                inputMode="numeric"
+              />
             </div>
             <div className="space-y-1">
               <Label>Known Allergies</Label>
