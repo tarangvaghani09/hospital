@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useListDepartments, getListDepartmentsQueryKey,
@@ -35,6 +35,13 @@ function DeptDialog({
   const [name, setName] = useState(initial?.name ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [isActive, setIsActive] = useState(initial?.isActive !== false);
+
+  useEffect(() => {
+    if (!open) return;
+    setName(initial?.name ?? "");
+    setDescription(initial?.description ?? "");
+    setIsActive(initial?.isActive !== false);
+  }, [open, initial]);
 
   const createMutation = useCreateDepartment();
   const updateMutation = useUpdateDepartment();
