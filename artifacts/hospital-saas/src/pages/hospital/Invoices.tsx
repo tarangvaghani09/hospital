@@ -370,7 +370,7 @@ export function CreateInvoiceDialog({
                 <div key={i} className="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
                   <Input placeholder="Description" value={item.description} onChange={(e) => updateItem(i, "description", e.target.value)} />
                   <Select value={item.category} onValueChange={(v) => updateItem(i, "category", v)}>
-                    <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent className="max-h-64 overflow-y-auto [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-500/70 [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-clip-content">
                       <SelectItem value="CONSULTATION">Consultation</SelectItem>
                       <SelectItem value="PROCEDURE">Procedure</SelectItem>
