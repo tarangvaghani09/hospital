@@ -339,7 +339,7 @@ export function CreateInvoiceDialog({
               <Input placeholder="Search..." value={patientSearch} onChange={(e) => setPatientSearch(e.target.value)} className="mb-1" />
               <Select value={patientId} onValueChange={setPatientId}>
                 <SelectTrigger><SelectValue placeholder="Select patient" /></SelectTrigger>
-                <SelectContent className="max-h-64 overflow-y-auto">
+                <SelectContent className="max-h-64 overflow-y-auto [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-500/70 [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-clip-content">
                   {patientsData?.patients?.map((p: any) => (
                     <SelectItem key={p.id} value={String(p.id)}>{p.name} {p.phone ? `(${p.phone})` : ""}</SelectItem>
                   ))}
@@ -371,7 +371,7 @@ export function CreateInvoiceDialog({
                   <Input placeholder="Description" value={item.description} onChange={(e) => updateItem(i, "description", e.target.value)} />
                   <Select value={item.category} onValueChange={(v) => updateItem(i, "category", v)}>
                     <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
-                    <SelectContent className="max-h-64 overflow-y-auto">
+                    <SelectContent className="max-h-64 overflow-y-auto [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-500/70 [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-clip-content">
                       <SelectItem value="CONSULTATION">Consultation</SelectItem>
                       <SelectItem value="PROCEDURE">Procedure</SelectItem>
                       <SelectItem value="MEDICINE">Medicine</SelectItem>
