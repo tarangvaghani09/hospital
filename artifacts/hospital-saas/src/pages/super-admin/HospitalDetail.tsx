@@ -175,15 +175,15 @@ export function SuperAdminHospitalDetail() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 pb-6 sm:pb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-start sm:items-center gap-4 min-w-0">
             <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
               <Building2 className="w-8 h-8" />
             </div>
-            <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-bold tracking-tight">{hospital.name}</h1>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight break-words">{hospital.name}</h1>
                 <Badge className={
                   hospital.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
                   hospital.status === 'PENDING' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
@@ -192,14 +192,14 @@ export function SuperAdminHospitalDetail() {
               <p className="text-muted-foreground mt-1">Hospital Code: {hospital.code}</p>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex w-full sm:w-auto flex-col sm:flex-row gap-2">
             {hospital.status !== 'ACTIVE' && (
-              <Button variant="outline" className="text-green-600 border-green-200 bg-green-50 hover:bg-green-100">
+              <Button variant="outline" className="w-full sm:w-auto text-green-600 border-green-200 bg-green-50 hover:bg-green-100">
                 <CheckCircle className="w-4 h-4 mr-2" /> Approve & Activate
               </Button>
             )}
             {hospital.status !== 'INACTIVE' && (
-              <Button variant="outline" className="text-red-600 border-red-200 bg-red-50 hover:bg-red-100">
+              <Button variant="outline" className="w-full sm:w-auto text-red-600 border-red-200 bg-red-50 hover:bg-red-100">
                 <XCircle className="w-4 h-4 mr-2" /> Deactivate
               </Button>
             )}
@@ -207,11 +207,11 @@ export function SuperAdminHospitalDetail() {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="staff">Staff</TabsTrigger>
-            <TabsTrigger value="subscription">Subscription</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsList className="w-full justify-start overflow-x-auto whitespace-nowrap">
+            <TabsTrigger className="shrink-0" value="overview">Overview</TabsTrigger>
+            <TabsTrigger className="shrink-0" value="staff">Staff</TabsTrigger>
+            <TabsTrigger className="shrink-0" value="subscription">Subscription</TabsTrigger>
+            <TabsTrigger className="shrink-0" value="settings">Settings</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">
@@ -236,14 +236,14 @@ export function SuperAdminHospitalDetail() {
                       <Mail className="w-5 h-5 text-muted-foreground shrink-0" />
                       <div>
                         <h4 className="text-sm font-medium text-muted-foreground mb-1">Email</h4>
-                        <p>{hospital.email || "Not provided"}</p>
+                        <p className="break-all">{hospital.email || "Not provided"}</p>
                       </div>
                     </div>
                     <div className="flex gap-3">
                       <Phone className="w-5 h-5 text-muted-foreground shrink-0" />
                       <div>
                         <h4 className="text-sm font-medium text-muted-foreground mb-1">Phone</h4>
-                        <p>{hospital.phone || "Not provided"}</p>
+                        <p className="break-all">{hospital.phone || "Not provided"}</p>
                       </div>
                     </div>
                   </div>
@@ -251,7 +251,7 @@ export function SuperAdminHospitalDetail() {
                     <MapPin className="w-5 h-5 text-muted-foreground shrink-0" />
                     <div>
                       <h4 className="text-sm font-medium text-muted-foreground mb-1">Address</h4>
-                      <p>{hospital.address || "Not provided"}</p>
+                      <p className="break-words">{hospital.address || "Not provided"}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -284,12 +284,12 @@ export function SuperAdminHospitalDetail() {
             {/* Doctors */}
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="min-w-0">
                     <CardTitle className="flex items-center gap-2"><Stethoscope className="w-5 h-5" /> Doctors</CardTitle>
                     <CardDescription>Manage doctors assigned to this hospital</CardDescription>
                   </div>
-                  <Button size="sm" className="gap-1" onClick={() => setDoctorDialog(true)}>
+                  <Button size="sm" className="gap-1 w-full sm:w-auto" onClick={() => setDoctorDialog(true)}>
                     <Plus className="w-4 h-4" /> Add Doctor
                   </Button>
                 </div>
@@ -323,12 +323,12 @@ export function SuperAdminHospitalDetail() {
             {/* Receptionists */}
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="min-w-0">
                     <CardTitle className="flex items-center gap-2"><UserCheck className="w-5 h-5" /> Receptionists</CardTitle>
                     <CardDescription>Manage receptionists assigned to this hospital</CardDescription>
                   </div>
-                  <Button size="sm" className="gap-1" onClick={() => setReceptionistDialog(true)}>
+                  <Button size="sm" className="gap-1 w-full sm:w-auto" onClick={() => setReceptionistDialog(true)}>
                     <Plus className="w-4 h-4" /> Add Receptionist
                   </Button>
                 </div>
@@ -365,10 +365,10 @@ export function SuperAdminHospitalDetail() {
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Current plan status */}
-                <div className="flex flex-wrap gap-6 p-4 bg-muted/30 rounded-xl border">
-                  <div>
+                <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-4 sm:gap-6 p-4 bg-muted/30 rounded-xl border">
+                  <div className="col-span-2 sm:col-auto">
                     <p className="text-xs text-muted-foreground mb-1">Active Plan</p>
-                    <p className="text-2xl font-bold">{hospital.subscriptionPlan || "Free Tier"}</p>
+                    <p className="text-xl sm:text-2xl font-bold break-words">{hospital.subscriptionPlan || "Free Tier"}</p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Status</p>
@@ -381,7 +381,7 @@ export function SuperAdminHospitalDetail() {
                   {hospital.subscriptionExpiry && (
                     <div>
                       <p className="text-xs text-muted-foreground mb-1">Expires</p>
-                      <p className="font-medium">{new Date(hospital.subscriptionExpiry).toLocaleDateString()}</p>
+                      <p className="font-medium whitespace-nowrap">{new Date(hospital.subscriptionExpiry).toLocaleDateString()}</p>
                     </div>
                   )}
                 </div>

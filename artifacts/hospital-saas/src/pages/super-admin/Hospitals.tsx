@@ -61,7 +61,7 @@ function AddHospitalDialog({ open, onClose }: { open: boolean; onClose: () => vo
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField control={form.control} name="hospitalName"
                 render={({ field }) => (
                   <FormItem className="col-span-2">
@@ -73,7 +73,7 @@ function AddHospitalDialog({ open, onClose }: { open: boolean; onClose: () => vo
               />
               <FormField control={form.control} name="adminName"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-2 md:col-span-1">
                     <FormLabel>Admin Name</FormLabel>
                     <FormControl><Input placeholder="Full name" {...field} /></FormControl>
                     <FormMessage />
@@ -82,7 +82,7 @@ function AddHospitalDialog({ open, onClose }: { open: boolean; onClose: () => vo
               />
               <FormField control={form.control} name="phone"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-2 md:col-span-1">
                     <FormLabel>Phone</FormLabel>
                     <FormControl><Input placeholder="+91 XXXXX XXXXX" {...field} /></FormControl>
                     <FormMessage />
@@ -91,7 +91,7 @@ function AddHospitalDialog({ open, onClose }: { open: boolean; onClose: () => vo
               />
               <FormField control={form.control} name="email"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-2 md:col-span-1">
                     <FormLabel>Admin Email</FormLabel>
                     <FormControl><Input type="email" placeholder="admin@hospital.com" {...field} /></FormControl>
                     <FormMessage />
@@ -100,7 +100,7 @@ function AddHospitalDialog({ open, onClose }: { open: boolean; onClose: () => vo
               />
               <FormField control={form.control} name="password"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-2 md:col-span-1">
                     <FormLabel>Initial Password</FormLabel>
                     <FormControl><Input type="password" placeholder="Min 8 characters" {...field} /></FormControl>
                     <FormMessage />
@@ -148,25 +148,25 @@ export function SuperAdminHospitals() {
             <h1 className="text-3xl font-bold tracking-tight">Hospitals</h1>
             <p className="text-muted-foreground mt-2">Manage all registered hospital tenants</p>
           </div>
-          <Button className="gap-2" onClick={() => setAddOpen(true)}>
+          <Button className="gap-2 w-full sm:w-auto" onClick={() => setAddOpen(true)}>
             <Plus className="w-4 h-4" /> Add Hospital
           </Button>
         </div>
 
         <Card>
           <CardHeader className="py-4">
-            <div className="flex items-center gap-2 max-w-sm">
-              <Search className="w-4 h-4 text-muted-foreground" />
+            <div className="relative w-full sm:max-w-sm">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search hospitals..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="h-9"
+                className="h-9 w-full pl-9"
               />
             </div>
           </CardHeader>
-          <CardContent className="p-0">
-            <Table>
+          <CardContent className="p-0 overflow-x-auto">
+            <Table className="min-w-[760px] sm:min-w-full">
               <TableHeader>
                 <TableRow>
                   <TableHead>Hospital</TableHead>
