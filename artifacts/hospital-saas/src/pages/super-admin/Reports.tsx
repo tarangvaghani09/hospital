@@ -13,7 +13,7 @@ export function SuperAdminReports() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 pb-6 sm:pb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Global Reports</h1>
           <p className="text-muted-foreground mt-2">Platform-wide financial and usage analytics</p>
@@ -65,17 +65,19 @@ export function SuperAdminReports() {
               <CardHeader>
                 <CardTitle>Revenue by Hospital</CardTitle>
               </CardHeader>
-              <CardContent className="h-[400px]">
+              <CardContent className="h-[400px] overflow-x-auto">
                 {data.revenueByHospital && data.revenueByHospital.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={data.revenueByHospital} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="hsl(var(--border))" />
-                      <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
-                      <YAxis type="category" dataKey="hospitalName" stroke="hsl(var(--foreground))" fontSize={12} tickLine={false} axisLine={false} width={150} />
-                      <Tooltip cursor={{fill: 'hsl(var(--muted))'}} contentStyle={{backgroundColor: 'hsl(var(--card))', borderRadius: '8px', border: '1px solid hsl(var(--border))'}} />
-                      <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} barSize={20} />
-                    </BarChart>
-                  </ResponsiveContainer>
+                  <div className="h-full min-w-[560px] sm:min-w-0">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={data.revenueByHospital} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="hsl(var(--border))" />
+                        <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
+                        <YAxis type="category" dataKey="hospitalName" stroke="hsl(var(--foreground))" fontSize={12} tickLine={false} axisLine={false} width={150} />
+                        <Tooltip cursor={{fill: 'hsl(var(--muted))'}} contentStyle={{backgroundColor: 'hsl(var(--card))', borderRadius: '8px', border: '1px solid hsl(var(--border))'}} />
+                        <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} barSize={20} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
                 ) : (
                   <div className="flex h-full items-center justify-center text-muted-foreground">No data available</div>
                 )}
@@ -86,8 +88,8 @@ export function SuperAdminReports() {
               <CardHeader>
                 <CardTitle>Top Performing Hospitals</CardTitle>
               </CardHeader>
-              <CardContent className="p-0">
-                <Table>
+              <CardContent className="p-0 overflow-x-auto">
+                <Table className="min-w-[560px] sm:min-w-full">
                   <TableHeader>
                     <TableRow>
                       <TableHead>Hospital Name</TableHead>

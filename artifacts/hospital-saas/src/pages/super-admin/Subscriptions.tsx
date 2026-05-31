@@ -124,7 +124,7 @@ export function SuperAdminSubscriptions() {
             <h1 className="text-3xl font-bold tracking-tight">Subscription Plans</h1>
             <p className="text-muted-foreground mt-2">Manage billing tiers and feature access</p>
           </div>
-          <Button className="gap-2" onClick={openCreate}>
+          <Button className="gap-2 w-full sm:w-auto" onClick={openCreate}>
             <Plus className="w-4 h-4" /> Create Plan
           </Button>
         </div>
