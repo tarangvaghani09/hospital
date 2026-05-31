@@ -304,21 +304,21 @@ export function ReceptionistDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-5">
+      <div className="space-y-5 pb-6 sm:pb-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Front Desk</h1>
             <p className="text-muted-foreground mt-1">Live patient queue for {new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" })}</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full sm:w-auto flex-wrap items-center gap-2">
             <span className="text-xs text-muted-foreground flex items-center gap-1">
               <RefreshCw className="w-3 h-3" /> {countdown}s
             </span>
             <Button variant="outline" size="sm" className="gap-1.5" onClick={invalidateQueue}>
               <RefreshCw className="w-3.5 h-3.5" /> Refresh
             </Button>
-            <Button className="gap-1.5" onClick={() => setBookOpen(true)}>
+            <Button className="gap-1.5 w-full sm:w-auto" onClick={() => setBookOpen(true)}>
               <Plus className="w-4 h-4" /> Book Appointment
             </Button>
           </div>
@@ -396,7 +396,7 @@ export function ReceptionistDashboard() {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setDoctorFilter("all")}
-            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${doctorFilter === "all" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+            className={`max-w-full px-3 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${doctorFilter === "all" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
           >
             All Doctors
           </button>
@@ -404,7 +404,8 @@ export function ReceptionistDashboard() {
             <button
               key={d.id}
               onClick={() => setDoctorFilter(String(d.id))}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${doctorFilter === String(d.id) ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+              className={`max-w-full px-3 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap overflow-hidden text-ellipsis ${doctorFilter === String(d.id) ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+              title={`Dr. ${d.name}`}
             >
               Dr. {d.name}
             </button>
@@ -414,11 +415,11 @@ export function ReceptionistDashboard() {
         {/* Live Queue */}
         <Card>
           <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <CardTitle className="flex flex-wrap items-center gap-2">
                 <CalIcon className="w-4 h-4 text-primary" />
                 Today's Queue
-                <Badge variant="secondary" className="ml-1">{activeQueue.length} active</Badge>
+                <Badge variant="secondary">{activeQueue.length} active</Badge>
               </CardTitle>
               <span className="text-xs text-muted-foreground">Last updated {lastRefresh.toLocaleTimeString()}</span>
             </div>
