@@ -589,7 +589,7 @@ export function Appointments() {
                     <SelectTrigger className="w-full sm:w-[160px]">
                       <SelectValue placeholder="All Doctors" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="max-h-64 overflow-y-auto [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-500/70 [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-clip-content">
                       <SelectItem value="all">All Doctors</SelectItem>
                       {(doctorsData as any[])?.filter((d: any) => {
                         if (!departmentFilter || departmentFilter === "all") return true;
