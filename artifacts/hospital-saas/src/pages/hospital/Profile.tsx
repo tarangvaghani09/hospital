@@ -110,7 +110,7 @@ export function HospitalProfile() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 max-w-3xl">
+      <div className="space-y-6 max-w-3xl pb-5 sm:pb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Hospital Profile</h1>
           <p className="text-muted-foreground mt-2">Manage your facility's public information and contact details</p>
