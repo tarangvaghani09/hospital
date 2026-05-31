@@ -16,7 +16,8 @@ import {
   BarChart3,
   Stethoscope,
   BriefcaseMedical,
-  X
+  X,
+  ChevronDown
 } from "lucide-react";
 
 interface NavItem {
@@ -119,12 +120,15 @@ export function Sidebar({
             <div className="px-4 pb-4 space-y-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="w-full rounded-xl border border-border px-3 py-2 text-left">
-                  <p className="text-sm font-medium leading-none truncate">{user.name}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{roleLabels[user.role]}</p>
+                <button className="w-full rounded-xl border border-border px-3 py-2 text-left flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium leading-none truncate">{user.name}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{roleLabels[user.role]}</p>
+                  </div>
+                  <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[240px] max-w-[70vw]">
+              <DropdownMenuContent align="end" className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0">
                 <DropdownMenuItem
                   className="cursor-pointer text-destructive focus:text-destructive"
                   onClick={() => {

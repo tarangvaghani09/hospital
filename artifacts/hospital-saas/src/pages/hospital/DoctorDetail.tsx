@@ -150,7 +150,7 @@ export function DoctorDetail() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 overflow-x-hidden">
+      <div className="space-y-6 overflow-x-hidden pb-6 sm:pb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <div className="flex items-center gap-3">
