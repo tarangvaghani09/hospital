@@ -129,7 +129,7 @@ export function SharedCalendar() {
                 <Skeleton className="h-40 w-full" />
               </div>
             ) : (
-              <div className="h-[700px] overflow-auto">
+              <div className="h-[700px] overflow-auto [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-500/70 [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-clip-content">
                 <div className="min-w-[760px]">
                 {/* Header */}
                 <div className="grid grid-cols-8 border-b sticky top-0 bg-card z-10 shadow-sm">
@@ -151,7 +151,7 @@ export function SharedCalendar() {
                 </div>
 
                 {/* Time grid */}
-                <div className="flex-1 overflow-y-auto">
+                <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-500/70 [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-clip-content">
                   {timeSlots.map((time, i) => (
                     <div key={i} className="grid grid-cols-8 border-b min-h-[80px]">
                       <div className="p-2 border-r text-xs text-muted-foreground text-center bg-muted/20 font-medium flex items-start justify-center pt-2">
