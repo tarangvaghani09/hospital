@@ -14,7 +14,7 @@ export function SuperAdminDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 pb-6 sm:pb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Platform Overview</h1>
           <p className="text-muted-foreground mt-2">Global metrics across all hospital tenants</p>
@@ -76,7 +76,7 @@ export function SuperAdminDashboard() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-              <Card className="col-span-4">
+              <Card className="md:col-span-4">
                 <CardHeader>
                   <CardTitle>Revenue Overview</CardTitle>
                 </CardHeader>
@@ -97,7 +97,7 @@ export function SuperAdminDashboard() {
                 </CardContent>
               </Card>
 
-              <Card className="col-span-3">
+              <Card className="md:col-span-3">
                 <CardHeader>
                   <CardTitle>Recent Hospitals</CardTitle>
                   <CardDescription>Latest hospital registrations</CardDescription>
@@ -105,12 +105,12 @@ export function SuperAdminDashboard() {
                 <CardContent>
                   <div className="space-y-4">
                     {data.recentHospitals?.map((hospital) => (
-                      <div key={hospital.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                      <div key={hospital.id} className="flex flex-col items-start gap-2 border-b pb-4 last:border-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                          <p className="font-medium">{hospital.name}</p>
+                          <p className="font-medium break-words">{hospital.name}</p>
                           <p className="text-sm text-muted-foreground">{new Date(hospital.createdAt).toLocaleDateString()}</p>
                         </div>
-                        <div className={`px-2 py-1 text-xs rounded-full font-medium ${hospital.status === 'ACTIVE' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'}`}>
+                        <div className={`self-start px-2 py-1 text-xs rounded-full font-medium sm:self-auto ${hospital.status === 'ACTIVE' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'}`}>
                           {hospital.status}
                         </div>
                       </div>

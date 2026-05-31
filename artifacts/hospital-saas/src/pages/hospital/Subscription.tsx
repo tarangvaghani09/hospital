@@ -176,7 +176,7 @@ export function HospitalSubscription() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 max-w-4xl mx-auto pb-5 sm:pb-6">
+      <div className="space-y-6 max-w-4xl mx-auto pb-6 sm:pb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Subscription Plan</h1>
           <p className="text-muted-foreground mt-2">Manage your current plan, usage, and billing</p>

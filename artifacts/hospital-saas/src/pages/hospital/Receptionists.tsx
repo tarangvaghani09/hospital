@@ -228,7 +228,7 @@ export function Receptionists() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 pb-5 sm:pb-6">
+      <div className="space-y-6 pb-6 sm:pb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Receptionists</h1>

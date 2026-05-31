@@ -108,7 +108,7 @@ export function Sidebar({
   return (
     <>
       <Sheet open={mobileOpen} onOpenChange={onMobileOpenChange}>
-        <SheetContent side="right" className="w-[82vw] max-w-[320px] p-0 md:hidden overflow-hidden [&>button]:hidden pb-5 sm:pb-6">
+        <SheetContent side="right" className="w-[82vw] max-w-[320px] p-0 md:hidden overflow-hidden [&>button]:hidden pb-6 sm:pb-6">
           <div className="h-full overflow-y-auto">
             <div className="sticky top-0 z-10 bg-background px-4 pt-3 pb-2 flex justify-end">
               <SheetClose className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground">
