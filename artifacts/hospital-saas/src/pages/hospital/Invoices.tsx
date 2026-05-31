@@ -330,7 +330,7 @@ export function CreateInvoiceDialog({
 
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
         <DialogHeader><DialogTitle>Create Invoice</DialogTitle></DialogHeader>
         <div className="space-y-4 py-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -367,7 +367,7 @@ export function CreateInvoiceDialog({
             </div>
             <div className="space-y-2">
               {items.map((item, i) => (
-                <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_120px_80px_80px_100px_32px] gap-2 items-center">
+                <div key={i} className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_110px_72px_72px_88px_28px] gap-2 items-center">
                   <Input placeholder="Description" value={item.description} onChange={(e) => updateItem(i, "description", e.target.value)} />
                   <Select value={item.category} onValueChange={(v) => updateItem(i, "category", v)}>
                     <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
