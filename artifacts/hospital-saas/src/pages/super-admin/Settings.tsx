@@ -36,7 +36,7 @@ export function SuperAdminSettings() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2 max-w-xs">
+            <div className="space-y-2 max-w-full sm:max-w-xs">
               <label className="text-sm font-medium">Display Currency</label>
               <Select value={currency} onValueChange={setCurrencyState}>
                 <SelectTrigger>
@@ -51,7 +51,7 @@ export function SuperAdminSettings() {
                     ) : "Select currency"}
                   </SelectValue>
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-56 overflow-hidden">
                   {CURRENCIES.map(c => (
                     <SelectItem key={c.code} value={c.code}>
                       <span className="flex items-center gap-2">
@@ -69,7 +69,7 @@ export function SuperAdminSettings() {
               </p>
             </div>
             <div className="flex justify-start pt-2">
-              <Button onClick={handleSave}>Save Settings</Button>
+              <Button className="w-full sm:w-auto" onClick={handleSave}>Save Settings</Button>
             </div>
           </CardContent>
         </Card>
