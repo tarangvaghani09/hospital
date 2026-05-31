@@ -195,7 +195,7 @@ function BookAppointmentDialog({ open, onClose, onSuccess, editAppointment, defa
             <Label>Doctor <span className="text-red-500">*</span></Label>
             <Select value={doctorId} onValueChange={(v) => { setDoctorId(v); if (!isEdit) setTime(""); }}>
               <SelectTrigger><SelectValue placeholder="Select doctor" /></SelectTrigger>
-              <SelectContent className="max-h-64 overflow-y-auto">
+              <SelectContent className="max-h-56 overflow-hidden">
                 {doctorsData?.map((d: any) => (
                   <SelectItem key={d.id} value={String(d.id)}>Dr. {d.name} {d.specialization ? `— ${d.specialization}` : ""}</SelectItem>
                 ))}
@@ -240,7 +240,7 @@ function BookAppointmentDialog({ open, onClose, onSuccess, editAppointment, defa
             <Label>Type</Label>
             <Select value={appointmentType} onValueChange={setAppointmentType}>
               <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent className="max-h-64 overflow-y-auto">
+              <SelectContent className="max-h-56 overflow-hidden">
                 <SelectItem value="WALK_IN">Walk-in</SelectItem>
                 <SelectItem value="SCHEDULED">Scheduled</SelectItem>
                 <SelectItem value="EMERGENCY">Emergency</SelectItem>
@@ -305,7 +305,7 @@ function StatusUpdateDialog({ appointment, open, onClose, onSuccess }: StatusDia
             <Label>Status</Label>
             <Select value={status} onValueChange={setStatus}>
               <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-56 overflow-hidden">
                 <SelectItem value="SCHEDULED">Scheduled</SelectItem>
                 <SelectItem value="CONFIRMED">Confirmed</SelectItem>
                 <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
@@ -335,22 +335,22 @@ function AppointmentDetailDialog({ appointment, open, onClose }: { appointment: 
   if (!appointment) return null;
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>Appointment Details</DialogTitle></DialogHeader>
         <div className="space-y-4 py-2">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-1">Patient</p>
-              <p className="font-semibold">{appointment.patientName}</p>
-              {appointment.patientPhone && <p className="text-sm text-muted-foreground">{appointment.patientPhone}</p>}
+              <p className="font-semibold break-words">{appointment.patientName}</p>
+              {appointment.patientPhone && <p className="text-sm text-muted-foreground break-all">{appointment.patientPhone}</p>}
             </div>
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-1">Doctor</p>
-              <p className="font-semibold">Dr. {appointment.doctorName}</p>
+              <p className="font-semibold break-words">Dr. {appointment.doctorName}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-1">Date</p>
-              <p className="font-medium">{new Date(appointment.appointmentDate + "T00:00:00").toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</p>
+              <p className="font-medium break-words">{new Date(appointment.appointmentDate + "T00:00:00").toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-1">Time</p>
@@ -563,7 +563,7 @@ export function Appointments() {
                   <SelectTrigger className="w-full sm:w-[160px]">
                     <SelectValue placeholder="All Statuses" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-56 overflow-hidden">
                     <SelectItem value="all">All Statuses</SelectItem>
                     <SelectItem value="SCHEDULED">Scheduled</SelectItem>
                     <SelectItem value="CONFIRMED">Confirmed</SelectItem>
@@ -577,7 +577,7 @@ export function Appointments() {
                   <SelectTrigger className="w-full sm:w-[160px]">
                     <SelectValue placeholder="All Departments" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-56 overflow-hidden">
                     <SelectItem value="all">All Departments</SelectItem>
                     {(departmentsData as any[])?.map((dept: any) => (
                       <SelectItem key={dept.id} value={String(dept.id)}>{dept.name}</SelectItem>
@@ -601,10 +601,11 @@ export function Appointments() {
                   </Select>
                 )}
                 {isDoctor && (
-                  <div className="flex gap-2">
+                  <div className="flex w-full sm:w-auto flex-col sm:flex-row gap-2">
                     <Button
                       variant={doctorFilter === myDoctorId ? "default" : "outline"}
                       size="sm"
+                      className="w-full sm:w-auto"
                       onClick={() => setDoctorFilter(myDoctorId)}
                     >
                       My Appointments
@@ -613,6 +614,7 @@ export function Appointments() {
                       <Button
                         variant={doctorFilter === "all" ? "default" : "outline"}
                         size="sm"
+                        className="w-full sm:w-auto"
                         onClick={() => setDoctorFilter("all")}
                       >
                         All in Department
@@ -623,8 +625,8 @@ export function Appointments() {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-0">
-            <Table>
+          <CardContent className="p-0 overflow-x-auto">
+            <Table className="min-w-[900px] sm:min-w-full">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-10"></TableHead>

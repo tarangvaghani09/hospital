@@ -13,7 +13,7 @@ export function DoctorDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 pb-6 sm:pb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Doctor Dashboard</h1>
           <p className="text-muted-foreground mt-2">Your schedule and patient overview for today</p>
