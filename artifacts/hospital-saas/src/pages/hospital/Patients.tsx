@@ -227,8 +227,8 @@ export function Patients() {
               </Select>
             </div>
           </CardHeader>
-          <CardContent className="p-0">
-            <Table>
+          <CardContent className="p-0 overflow-x-auto">
+            <Table className="min-w-[760px] sm:min-w-full">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-10"></TableHead>
@@ -273,7 +273,7 @@ export function Patients() {
                         <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground font-medium text-xs shrink-0">
                           {patient.name.charAt(0)}
                         </div>
-                        <p className="font-medium break-words">{patient.name}</p>
+                        <p className="font-medium truncate max-w-[170px] sm:max-w-none">{patient.name}</p>
                       </div>
                     </TableCell>
                     <TableCell>

@@ -335,9 +335,9 @@ function AppointmentDetailDialog({ appointment, open, onClose }: { appointment: 
   if (!appointment) return null;
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[calc(100vw-1.5rem)] max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>Appointment Details</DialogTitle></DialogHeader>
-        <div className="space-y-4 py-2">
+        <div className="space-y-4 py-1 sm:py-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-1">Patient</p>
