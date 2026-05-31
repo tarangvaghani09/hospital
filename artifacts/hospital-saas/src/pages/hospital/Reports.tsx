@@ -34,18 +34,18 @@ export function HospitalReports() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 pb-5 sm:pb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Reports & Analytics</h1>
           <p className="text-muted-foreground mt-2">Comprehensive operational and financial insights</p>
         </div>
 
         <Tabs defaultValue="billing" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 lg:w-[600px]">
-            <TabsTrigger value="billing">Doctor Billing</TabsTrigger>
-            <TabsTrigger value="collection">Daily Collection</TabsTrigger>
-            <TabsTrigger value="revenue">Revenue Chart</TabsTrigger>
-            <TabsTrigger value="appointments">Appointments</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto lg:grid lg:w-[600px] lg:grid-cols-4">
+            <TabsTrigger value="billing" className="shrink-0 whitespace-nowrap">Doctor Billing</TabsTrigger>
+            <TabsTrigger value="collection" className="shrink-0 whitespace-nowrap">Daily Collection</TabsTrigger>
+            <TabsTrigger value="revenue" className="shrink-0 whitespace-nowrap">Revenue Chart</TabsTrigger>
+            <TabsTrigger value="appointments" className="shrink-0 whitespace-nowrap">Appointments</TabsTrigger>
           </TabsList>
 
           <TabsContent value="billing" className="mt-6">
@@ -61,7 +61,8 @@ export function HospitalReports() {
                 {isLoadingBilling ? (
                   <Skeleton className="h-[400px] w-full" />
                 ) : (
-                  <Table>
+                  <div className="overflow-x-auto">
+                  <Table className="min-w-[760px] sm:min-w-full">
                     <TableHeader>
                       <TableRow>
                         <TableHead>Doctor</TableHead>
@@ -88,6 +89,7 @@ export function HospitalReports() {
                       )}
                     </TableBody>
                   </Table>
+                  </div>
                 )}
               </CardContent>
             </Card>

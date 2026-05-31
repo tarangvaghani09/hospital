@@ -248,14 +248,14 @@ function ViewPrescriptionDialog({ rx, open, onClose }: { rx: any; open: boolean;
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2">
-          <div className="grid grid-cols-2 gap-3 text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             <div className="flex items-center gap-2 text-muted-foreground">
               <User className="w-4 h-4" />
-              <span className="font-medium text-foreground">{rx.patientName}</span>
+              <span className="font-medium text-foreground break-all">{rx.patientName}</span>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">
               <Stethoscope className="w-4 h-4" />
-              <span className="font-medium text-foreground">Dr. {rx.doctorName}</span>
+              <span className="font-medium text-foreground break-words">Dr. {rx.doctorName}</span>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">
               <Calendar className="w-4 h-4" />
@@ -378,14 +378,14 @@ export function Prescriptions() {
             <h1 className="text-3xl font-bold tracking-tight">Prescriptions</h1>
             <p className="text-muted-foreground mt-2">Manage medical prescriptions across the hospital</p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button className="gap-2 px-3" variant="outline" onClick={() => toggleSelectAll(selectedIds.length !== prescriptions.length)}>
+          <div className="flex w-full sm:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end">
+            <Button className="gap-2 px-3 w-full sm:w-auto" variant="outline" onClick={() => toggleSelectAll(selectedIds.length !== prescriptions.length)}>
               {selectedIds.length === prescriptions.length && prescriptions.length > 0
                 ? <CheckSquare className="w-4 h-4 text-purple-600" />
                 : <Square className="w-4 h-4 text-slate-500" />}
               {selectedIds.length === prescriptions.length && prescriptions.length > 0 ? "Deselect all" : `Select all prescriptions (${prescriptions.length})`}
             </Button>
-            <Button className="gap-2 cursor-pointer" onClick={() => setNewOpen(true)}>
+            <Button className="gap-2 cursor-pointer w-full sm:w-auto" onClick={() => setNewOpen(true)}>
               <Plus className="w-4 h-4" /> New Prescription
             </Button>
           </div>
@@ -393,13 +393,13 @@ export function Prescriptions() {
 
         <Card>
           <div className="p-4">
-            <div className="flex items-center gap-2 max-w-md">
-              <Search className="w-4 h-4 text-muted-foreground" />
-              <Input placeholder="Filter prescriptions..." value={search} onChange={(e) => setSearch(e.target.value)} className="h-9" />
+            <div className="relative w-full sm:max-w-md">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input placeholder="Filter prescriptions..." value={search} onChange={(e) => setSearch(e.target.value)} className="h-9 w-full pl-9" />
             </div>
           </div>
-          <CardContent className="p-0">
-            <Table>
+          <CardContent className="p-0 overflow-x-auto">
+            <Table className="min-w-[900px] sm:min-w-full">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-10"></TableHead>
