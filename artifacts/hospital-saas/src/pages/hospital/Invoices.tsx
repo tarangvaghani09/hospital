@@ -367,7 +367,7 @@ export function CreateInvoiceDialog({
             </div>
             <div className="space-y-2">
               {items.map((item, i) => (
-                <div key={i} className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_110px_72px_72px_88px_28px] gap-2 items-center">
+                <div key={i} className="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
                   <Input placeholder="Description" value={item.description} onChange={(e) => updateItem(i, "description", e.target.value)} />
                   <Select value={item.category} onValueChange={(v) => updateItem(i, "category", v)}>
                     <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
