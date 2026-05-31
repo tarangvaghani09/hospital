@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetClose, SheetContent } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import {
   LayoutDashboard,
@@ -15,7 +15,8 @@ import {
   ClipboardList,
   BarChart3,
   Stethoscope,
-  BriefcaseMedical
+  BriefcaseMedical,
+  X
 } from "lucide-react";
 
 interface NavItem {
@@ -107,8 +108,15 @@ export function Sidebar({
   return (
     <>
       <Sheet open={mobileOpen} onOpenChange={onMobileOpenChange}>
-        <SheetContent side="right" className="w-[82vw] max-w-[320px] p-0 md:hidden">
-          <div className="h-full px-4 pb-4 pt-12 space-y-4 overflow-y-auto">
+        <SheetContent side="right" className="w-[82vw] max-w-[320px] p-0 md:hidden overflow-hidden [&>button]:hidden pb-5 sm:pb-6">
+          <div className="h-full overflow-y-auto">
+            <div className="sticky top-0 z-10 bg-background px-4 pt-3 pb-2 flex justify-end">
+              <SheetClose className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground">
+                <X className="h-4 w-4" />
+                <span className="sr-only">Close</span>
+              </SheetClose>
+            </div>
+            <div className="px-4 pb-4 space-y-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="w-full rounded-xl border border-border px-3 py-2 text-left">
@@ -149,6 +157,7 @@ export function Sidebar({
               );
             })}
             </nav>
+            </div>
           </div>
         </SheetContent>
       </Sheet>
