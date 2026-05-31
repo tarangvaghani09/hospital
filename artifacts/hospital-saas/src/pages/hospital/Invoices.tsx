@@ -803,7 +803,7 @@ function InvoicePreviewDialog({ invoiceId, open, onClose }: { invoiceId: number 
               )}
             </div>
 
-            <div className="overflow-x-auto mb-6">
+            <div className="overflow-x-auto mb-6 md:[&::-webkit-scrollbar]:h-2.5 md:[&::-webkit-scrollbar]:w-2.5 md:[&::-webkit-scrollbar-track]:bg-transparent md:[&::-webkit-scrollbar-thumb]:rounded-full md:[&::-webkit-scrollbar-thumb]:bg-slate-500/70 md:[&::-webkit-scrollbar-thumb]:border-2 md:[&::-webkit-scrollbar-thumb]:border-transparent md:[&::-webkit-scrollbar-thumb]:bg-clip-content">
             <table className="w-full min-w-[680px] border-collapse">
               <thead>
                 <tr className="bg-muted/60">
